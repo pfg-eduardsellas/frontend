@@ -45,7 +45,7 @@ export default function Login({ onLogin }) {
       return;
     }
 
-    onLogin(loginResult.data.access_token);
+    onLogin(loginResult.data.access_token, loginResult.data.api_token ?? null);
   };
 
   return (

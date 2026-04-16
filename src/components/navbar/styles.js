@@ -205,9 +205,54 @@ export const ChevronIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: #64748b;
-  
+
   svg {
     width: 16px;
     height: 16px;
+  }
+`;
+
+export const UserWrapper = styled.div`
+  position: relative;
+`;
+
+export const UserDropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  overflow: hidden;
+`;
+
+export const UserDropdownItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: ${({ $danger }) => $danger ? '#dc2626' : '#0f172a'};
+  text-align: left;
+  transition: background 0.12s;
+  border-bottom: ${({ $divider }) => $divider ? '1px solid #f1f5f9' : 'none'};
+
+  &:hover {
+    background: ${({ $danger }) => $danger ? '#fef2f2' : '#f8fafc'};
+  }
+
+  svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    color: ${({ $danger }) => $danger ? '#dc2626' : '#64748b'};
   }
 `;

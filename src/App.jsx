@@ -5,13 +5,15 @@ import Login from './containers/login/index.jsx';
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
 
-  const handleLogin = (t) => {
-    localStorage.setItem('token', t);
-    setToken(t);
+  const handleLogin = (accessToken, apiToken) => {
+    localStorage.setItem('token', accessToken);
+    if (apiToken) localStorage.setItem('api_token', apiToken);
+    setToken(accessToken);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('api_token');
     setToken(null);
   };
 
