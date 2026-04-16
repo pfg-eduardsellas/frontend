@@ -45,9 +45,78 @@ export const LogoText = styled.span`
 `;
 
 export const SelectWrapper = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 280px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
+`;
+
+export const DropdownItem = styled.div`
+  padding: 9px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  background: ${({ $active }) => $active ? '#eef2ff' : 'white'};
+  &:last-child { border-bottom: none; }
+  &:hover { background: ${({ $active }) => $active ? '#eef2ff' : '#f8fafc'}; }
+`;
+
+export const DropdownItemTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+`;
+
+export const DropdownUrl = styled.p`
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const DropdownMeta = styled.span`
+  font-size: 0.7rem;
+  color: #94a3b8;
+`;
+
+export const DropdownStatus = styled.span`
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: ${({ $status }) => ({
+    pending: '#fef3c7', running: '#dbeafe', done: '#d1fae5', error: '#fee2e2',
+  }[$status] ?? '#f3f4f6')};
+  color: ${({ $status }) => ({
+    pending: '#92400e', running: '#1e40af', done: '#065f46', error: '#991b1b',
+  }[$status] ?? '#374151')};
+`;
+
+export const DropdownEmpty = styled.p`
+  font-size: 0.8rem;
+  color: #94a3b8;
+  padding: 12px 14px;
+  margin: 0;
 `;
 
 export const StyledSelectButton = styled.button`

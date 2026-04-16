@@ -300,3 +300,105 @@ export const DeleteButton = styled.button`
   line-height: 1;
   &:hover { color: #b91c1c; }
 `;
+
+const scheduledControlCss = `
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 0.8rem;
+  color: #374151;
+  background: white;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  &:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+`;
+
+export const ScheduleBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+`;
+
+export const DayRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const DayLabel = styled.span`
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: ${({ $enabled }) => $enabled ? '#374151' : '#9ca3af'};
+  width: 32px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+`;
+
+export const ScheduleTimeInput = styled.input`
+  ${scheduledControlCss}
+  padding: 7px 10px;
+  font-size: 0.8rem;
+`;
+
+/* ── Error Panel ─────────────────────────────────────────────────────────── */
+
+export const ErrorList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  overflow-y: auto;
+`;
+
+export const ErrorItem = styled.div`
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+`;
+
+export const ErrorMessage = styled.p`
+  font-size: 0.78rem;
+  color: #991b1b;
+  margin: 0;
+  line-height: 1.4;
+`;
+
+export const ErrorMeta = styled.span`
+  font-size: 0.68rem;
+  color: #f87171;
+`;
+
+export const RepeatWeekRow = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  padding-top: 8px;
+  margin-top: 2px;
+  border-top: 1px solid #e5e7eb;
+  user-select: none;
+`;
+
+export const ScheduleBadge = styled.span`
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #6366f1;
+  background: #eef2ff;
+  border-radius: 4px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+`;

@@ -1,8 +1,22 @@
-import { useCallback, useEffect, useState } from "react";
-import Navbar from "../../components/navbar";
-import LeftSection from "./components/LeftSection";
-import ScanTerminal from "./components/ScanTerminal";
-import NewScanModal from "./components/NewScanModal";
+import { useCallback, useEffect, useState } from 'react';
+import Navbar from '../../components/navbar';
+import LeftSection from './components/LeftSection';
+import ScanTerminal from './components/ScanTerminal';
+import NewScanModal from './components/NewScanModal';
+import {
+  useGetScansQuery,
+  useGetScanQuery,
+  useGetPathsQuery,
+  useCreatePathMutation,
+  useDeletePathMutation,
+  useGetScanActionsQuery,
+} from '../../api';
+import {
+  DAYS,
+  DEFAULT_WEEK_SCHEDULE,
+  POLL_INTERVAL_MS,
+  formatScheduleBadge,
+} from './helpers';
 import {
   Container,
   Wrapper,
@@ -12,191 +26,134 @@ import {
   ScanButton,
   PathDisplay,
   ScanList,
-  ScanItem,
-  ScanUrl,
-  ScanMeta,
-  StatusBadge,
-  ScanDetailPanel,
-  ScanInfoSection,
-  ScanInfoGrid,
-  ScanInfoItem,
-  ScanInfoLabel,
-  ScanInfoValue,
-  ScanErrorMessage,
   PathItem,
   PathItemText,
   DeleteButton,
-} from "./styles";
-
-const POLL_INTERVAL_MS = 3000;
+  ScheduleBox,
+  ScheduleTimeInput,
+  DayRow,
+  DayLabel,
+  RepeatWeekRow,
+  ScheduleBadge,
+  ErrorList,
+  ErrorItem,
+  ErrorMessage,
+  ErrorMeta,
+} from './styles';
 
 function HomePage({ onLogout }) {
-  const [scans, setScans] = useState([]);
   const [selectedScan, setSelectedScan] = useState(null);
-  const [scanDetail, setScanDetail] = useState(null);
-  const [fetchError, setFetchError] = useState(null);
   const [newScanOpen, setNewScanOpen] = useState(false);
+
+  // ── Test path state ──────────────────────────────────────────────────────
   const [testPathMode, setTestPathMode] = useState(false);
   const [selectedPath, setSelectedPath] = useState([]);
-  const [savedPaths, setSavedPaths] = useState([]);
-  const [savingPath, setSavingPath] = useState(false);
+  const [weekSchedule, setWeekSchedule] = useState(DEFAULT_WEEK_SCHEDULE);
+  const [scheduleTime, setScheduleTime] = useState('');
+  const [repeatWeekly, setRepeatWeekly] = useState(false);
 
-  // ── Fetch scan list ──────────────────────────────────────────────────────
-  const fetchScans = useCallback(async () => {
-    try {
-      const res = await fetch("/api/scans", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (!res.ok) {
-        if (res.status === 401) onLogout();
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      setScans(data);
+  // Polling intervals tracked in state so hooks don't reference their own result.
+  const [scansPolling, setScansPolling] = useState(POLL_INTERVAL_MS);
+  const [detailPolling, setDetailPolling] = useState(0);
 
-      // Auto-select the most recent scan if none is selected yet
-      setSelectedScan((prev) => {
-        if (prev === null && data.length > 0) return data[0].id;
-        return prev;
-      });
-    } catch (e) {
-      setFetchError(e.message);
-    }
-  }, []);
+  // ── RTK Query: scan list ──────────────────────────────────────────────────
+  const { data: scans = [] } = useGetScansQuery(undefined, {
+    pollingInterval: scansPolling,
+  });
 
-  useEffect(() => {
-    fetchScans();
-  }, [fetchScans]);
-
-  // ── Poll scan list while any scan is running ─────────────────────────────
+  // Stop polling once no scan is running/pending.
   useEffect(() => {
     const hasRunning = scans.some(
-      (s) => s.status === "running" || s.status === "pending"
+      (s) => s.status === 'running' || s.status === 'pending'
     );
-    if (!hasRunning) return;
-    const id = setInterval(fetchScans, POLL_INTERVAL_MS);
-    return () => clearInterval(id);
-  }, [scans, fetchScans]);
+    setScansPolling(hasRunning ? POLL_INTERVAL_MS : 0);
+  }, [scans]);
 
-  // ── Fetch detail of selected scan ─────────────────────────────────────────
-  const fetchScanDetail = useCallback(async () => {
-    if (!selectedScan) return;
-    try {
-      const res = await fetch(`/api/scans/${selectedScan}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setScanDetail(data);
-        // Keep scan list status in sync
-        setScans((prev) =>
-          prev.map((s) => (s.id === data.id ? { ...s, ...data } : s))
-        );
-      }
-    } catch {
-      // silent
-    }
-  }, [selectedScan]);
+  // ── RTK Query: selected scan detail ──────────────────────────────────────
+  const { data: scanDetail } = useGetScanQuery(selectedScan, {
+    skip: !selectedScan,
+    pollingInterval: detailPolling,
+  });
 
-  useEffect(() => {
-    setScanDetail(null);
-    if (selectedScan) fetchScanDetail();
-  }, [selectedScan]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Poll detail while selected scan is pending/running
+  // Poll detail while the selected scan is active.
   useEffect(() => {
     const isActive =
-      scanDetail?.status === "running" || scanDetail?.status === "pending";
-    if (!isActive) return;
-    const id = setInterval(fetchScanDetail, POLL_INTERVAL_MS);
-    return () => clearInterval(id);
-  }, [scanDetail?.status, fetchScanDetail]);
+      scanDetail?.status === 'running' || scanDetail?.status === 'pending';
+    setDetailPolling(isActive ? POLL_INTERVAL_MS : 0);
+  }, [scanDetail?.status]);
+
+  // ── RTK Query: saved paths ────────────────────────────────────────────────
+  const { data: savedPaths = [] } = useGetPathsQuery(selectedScan, {
+    skip: !selectedScan,
+  });
+
+  // ── RTK Query: graph actions (for error panel) ────────────────────────────
+  const activeScan = scans.find((s) => s.id === selectedScan);
+  const { data: actionsData } = useGetScanActionsQuery(selectedScan, {
+    skip: !selectedScan || activeScan?.status !== 'done',
+  });
+  const graphActions = actionsData?.actions ?? [];
+
+  // ── RTK Query: mutations ──────────────────────────────────────────────────
+  const [createPath, { isLoading: savingPath }] = useCreatePathMutation();
+  const [deletePath] = useDeletePathMutation();
+
+  const isActive =
+    scanDetail?.status === 'running' || scanDetail?.status === 'pending';
+
+  // ── Auto-select first scan ────────────────────────────────────────────────
+  if (selectedScan === null && scans.length > 0) {
+    setSelectedScan(scans[0].id);
+  }
 
   // ── Helpers ──────────────────────────────────────────────────────────────
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "";
-    return new Date(dateStr).toLocaleString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const resetTestPath = () => {
+    setTestPathMode(false);
+    setSelectedPath([]);
+    setWeekSchedule(DEFAULT_WEEK_SCHEDULE);
+    setScheduleTime('');
+    setRepeatWeekly(false);
   };
 
-  // ── Saved paths CRUD ─────────────────────────────────────────────────────
-  const fetchPaths = useCallback(async () => {
-    if (!selectedScan) return;
-    try {
-      const res = await fetch(`/api/scans/${selectedScan}/path`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (res.ok) setSavedPaths(await res.json());
-    } catch {
-      /* silent */
-    }
-  }, [selectedScan]);
+  const handleSelectScan = (id) => {
+    setSelectedScan(id);
+    resetTestPath();
+  };
 
   const handleSavePath = async () => {
     if (!selectedScan || selectedPath.length === 0) return;
-    setSavingPath(true);
-    try {
-      const res = await fetch(`/api/scans/${selectedScan}/path`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ path: selectedPath.join(",") }),
-      });
-      if (res.ok) {
-        setTestPathMode(false);
-        setSelectedPath([]);
-        fetchPaths();
-      }
-    } catch {
-      /* silent */
-    } finally {
-      setSavingPath(false);
-    }
+    const result = await createPath({
+      scanId: selectedScan,
+      path: selectedPath.join(','),
+      schedule_days: DAYS.filter(({ key }) => weekSchedule[key]).map(({ key }) => key),
+      schedule_time: scheduleTime || null,
+      repeat_weekly: repeatWeekly,
+    });
+    if (!result.error) resetTestPath();
   };
 
-  const handleDeletePath = async (pathId) => {
-    try {
-      const res = await fetch(`/api/scans/${selectedScan}/path/${pathId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (res.ok) setSavedPaths((prev) => prev.filter((p) => p.id !== pathId));
-    } catch {
-      /* silent */
-    }
+  const handleDeletePath = (pathId) => {
+    deletePath({ scanId: selectedScan, pathId });
   };
 
-  // Clear test path and reload saved paths when selected scan changes
-  useEffect(() => {
-    setTestPathMode(false);
-    setSelectedPath([]);
-    setSavedPaths([]);
-    fetchPaths();
-  }, [selectedScan, fetchPaths]);
-
-  // Toggle a node in the path. Deselecting a node removes it and everything after it.
+  // Toggle a node in the path. Deselecting removes it and everything after it.
   const handleNodeToggle = useCallback((nodeId) => {
     setSelectedPath((prev) => {
       const idx = prev.indexOf(nodeId);
-      if (idx !== -1) return prev.slice(0, idx); // deselect this and subsequent
+      if (idx !== -1) return prev.slice(0, idx);
       return [...prev, nodeId];
     });
   }, []);
 
-  const activeScan = scans.find((s) => s.id === selectedScan);
-  const isActive =
-    scanDetail?.status === "running" || scanDetail?.status === "pending";
-
   return (
     <Container>
-      <Navbar onLogout={onLogout} onNewScan={() => setNewScanOpen(true)} />
+      <Navbar
+        onLogout={onLogout}
+        onNewScan={() => setNewScanOpen(true)}
+        scans={scans}
+        selectedScan={selectedScan}
+        onSelectScan={handleSelectScan}
+      />
       <Wrapper>
         {/* ── Graph Area ── */}
         <LeftSection
@@ -209,67 +166,109 @@ function HomePage({ onLogout }) {
 
         {/* ── Right Panel ── */}
         <RightSection>
-          {/* Scan history */}
+          {/* Action errors */}
           <ScanPanel style={{ flex: 1, minHeight: 0 }}>
-            <PanelTitle>Scans ({scans.length})</PanelTitle>
-            <ScanList>
-              {scans.length === 0 && (
-                <p style={{ fontSize: "0.8rem", color: "#9ca3af", margin: 0 }}>
-                  No scans yet. Enter a URL and hit "Start scan".
-                </p>
-              )}
-              {scans.map((scan) => (
-                <ScanItem
-                  key={scan.id}
-                  $active={scan.id === selectedScan}
-                  onClick={() => setSelectedScan(scan.id)}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 2,
-                    }}
-                  >
-                    <StatusBadge $status={scan.status}>
-                      {scan.status}
-                    </StatusBadge>
-                    <ScanMeta>#{scan.id}</ScanMeta>
-                  </div>
-                  <ScanUrl title={scan.target_url}>{scan.target_url}</ScanUrl>
-                  <ScanMeta>{formatDate(scan.created_at)}</ScanMeta>
-                </ScanItem>
-              ))}
-            </ScanList>
+            <PanelTitle>Action errors</PanelTitle>
+            {(() => {
+              const actionsWithErrors = graphActions.filter(
+                (a) => a.errors?.length > 0
+              );
+              if (!selectedScan) {
+                return (
+                  <p style={{ fontSize: '0.78rem', color: '#9ca3af', margin: 0 }}>
+                    Select a scan to see errors.
+                  </p>
+                );
+              }
+              if (actionsWithErrors.length === 0) {
+                return (
+                  <p style={{ fontSize: '0.78rem', color: '#9ca3af', margin: 0 }}>
+                    No errors recorded.
+                  </p>
+                );
+              }
+              return (
+                <ErrorList>
+                  {actionsWithErrors.map((action) =>
+                    action.errors.map((err, i) => (
+                      <ErrorItem key={`${action.id}-${i}`}>
+                        <ErrorMeta>
+                          {action.type} #{action.id}
+                        </ErrorMeta>
+                        <ErrorMessage>{err}</ErrorMessage>
+                      </ErrorItem>
+                    ))
+                  )}
+                </ErrorList>
+              );
+            })()}
           </ScanPanel>
+
           {/* Test Path */}
           <ScanPanel>
             <PanelTitle>Test Path</PanelTitle>
 
             {testPathMode ? (
               <>
-                <p style={{ fontSize: "0.78rem", color: "#6b7280", margin: 0 }}>
+                <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: 0 }}>
                   {selectedPath.length === 0
-                    ? "Select a URL node to start the path."
-                    : `${selectedPath.length} node${
-                        selectedPath.length !== 1 ? "s" : ""
-                      } selected`}
+                    ? 'Select a URL node to start the path.'
+                    : `${selectedPath.length} node${selectedPath.length !== 1 ? 's' : ''} selected`}
                 </p>
 
                 {selectedPath.length > 0 && (
-                  <PathDisplay readOnly value={selectedPath.join(",")} />
+                  <PathDisplay readOnly value={selectedPath.join(',')} />
                 )}
 
-                <div style={{ display: "flex", gap: 6 }}>
-                  <ScanButton
-                    $secondary
-                    style={{ flex: 1 }}
-                    onClick={() => {
-                      setTestPathMode(false);
-                      setSelectedPath([]);
+                <ScheduleBox>
+                  {DAYS.map(({ key, label }) => (
+                    <DayRow key={key}>
+                      <input
+                        type="checkbox"
+                        checked={weekSchedule[key]}
+                        onChange={(e) =>
+                          setWeekSchedule((prev) => ({ ...prev, [key]: e.target.checked }))
+                        }
+                        style={{ accentColor: '#6366f1', cursor: 'pointer' }}
+                      />
+                      <DayLabel $enabled={weekSchedule[key]}>{label}</DayLabel>
+                    </DayRow>
+                  ))}
+
+                  <label
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: '#6b7280',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4,
+                      paddingTop: 6,
+                      borderTop: '1px solid #e5e7eb',
+                      marginTop: 2,
                     }}
                   >
+                    Time
+                    <ScheduleTimeInput
+                      type="time"
+                      value={scheduleTime}
+                      onChange={(e) => setScheduleTime(e.target.value)}
+                    />
+                  </label>
+
+                  <RepeatWeekRow>
+                    <input
+                      type="checkbox"
+                      checked={repeatWeekly}
+                      onChange={(e) => setRepeatWeekly(e.target.checked)}
+                      style={{ accentColor: '#6366f1', cursor: 'pointer' }}
+                    />
+                    Repeat every week
+                  </RepeatWeekRow>
+                </ScheduleBox>
+
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <ScanButton $secondary style={{ flex: 1 }} onClick={resetTestPath}>
                     Cancel
                   </ScanButton>
                   <ScanButton
@@ -277,7 +276,7 @@ function HomePage({ onLogout }) {
                     disabled={selectedPath.length === 0 || savingPath}
                     onClick={handleSavePath}
                   >
-                    {savingPath ? "Saving…" : "Save path"}
+                    {savingPath ? 'Saving…' : 'Save path'}
                   </ScanButton>
                 </div>
               </>
@@ -285,11 +284,11 @@ function HomePage({ onLogout }) {
               <>
                 <ScanButton
                   onClick={() => setTestPathMode(true)}
-                  disabled={activeScan?.status !== "done"}
+                  disabled={activeScan?.status !== 'done'}
                   title={
-                    activeScan?.status !== "done"
-                      ? "Scan must be complete to build a path"
-                      : ""
+                    activeScan?.status !== 'done'
+                      ? 'Scan must be complete to build a path'
+                      : ''
                   }
                 >
                   New test path
@@ -299,7 +298,20 @@ function HomePage({ onLogout }) {
                   <ScanList style={{ maxHeight: 160 }}>
                     {savedPaths.map((p) => (
                       <PathItem key={p.id}>
-                        <PathItemText title={p.path}>{p.path}</PathItemText>
+                        <div
+                          style={{
+                            flex: 1,
+                            minWidth: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 3,
+                          }}
+                        >
+                          <PathItemText title={p.path}>{p.path}</PathItemText>
+                          {formatScheduleBadge(p) && (
+                            <ScheduleBadge>{formatScheduleBadge(p)}</ScheduleBadge>
+                          )}
+                        </div>
                         <DeleteButton
                           onClick={() => handleDeletePath(p.id)}
                           title="Delete path"
@@ -311,10 +323,8 @@ function HomePage({ onLogout }) {
                   </ScanList>
                 )}
 
-                {savedPaths.length === 0 && activeScan?.status === "done" && (
-                  <p
-                    style={{ fontSize: "0.78rem", color: "#9ca3af", margin: 0 }}
-                  >
+                {savedPaths.length === 0 && activeScan?.status === 'done' && (
+                  <p style={{ fontSize: '0.78rem', color: '#9ca3af', margin: 0 }}>
                     No paths saved yet.
                   </p>
                 )}
@@ -327,75 +337,11 @@ function HomePage({ onLogout }) {
       <NewScanModal
         isOpen={newScanOpen}
         onClose={() => setNewScanOpen(false)}
-        onLogout={onLogout}
-        onScanCreated={(newScan) => {
-          setScans((prev) => [newScan, ...prev]);
-          setSelectedScan(newScan.id);
-        }}
+        onScanCreated={(newScan) => handleSelectScan(newScan.id)}
       />
 
-      {/* ── Scan Detail Panel ── */}
       {scanDetail && (
-        <>
-          <ScanTerminal logs={scanDetail.logs ?? []} isActive={isActive} />
-          {/*<ScanDetailPanel>
-            <ScanInfoSection>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <StatusBadge $status={scanDetail.status}>
-                  {scanDetail.status}
-                </StatusBadge>
-                <span style={{ fontSize: "0.72rem", color: "#64748b" }}>
-                  #{scanDetail.id}
-                </span>
-              </div>
-              <ScanInfoGrid>
-                <ScanInfoItem>
-                  <ScanInfoLabel>URL</ScanInfoLabel>
-                  <ScanInfoValue title={scanDetail.target_url}>
-                    {scanDetail.target_url}
-                  </ScanInfoValue>
-                </ScanInfoItem>
-                <ScanInfoItem>
-                  <ScanInfoLabel>Iniciado</ScanInfoLabel>
-                  <ScanInfoValue>
-                    {formatDate(scanDetail.created_at)}
-                  </ScanInfoValue>
-                </ScanInfoItem>
-                {scanDetail.finished_at && (
-                  <ScanInfoItem>
-                    <ScanInfoLabel>Finalizado</ScanInfoLabel>
-                    <ScanInfoValue>
-                      {formatDate(scanDetail.finished_at)}
-                    </ScanInfoValue>
-                  </ScanInfoItem>
-                )}
-                <ScanInfoItem>
-                  <ScanInfoLabel>Páginas máx.</ScanInfoLabel>
-                  <ScanInfoValue>{scanDetail.max_pages}</ScanInfoValue>
-                </ScanInfoItem>
-                <ScanInfoItem>
-                  <ScanInfoLabel>Profundidad</ScanInfoLabel>
-                  <ScanInfoValue>{scanDetail.max_depth}</ScanInfoValue>
-                </ScanInfoItem>
-                <ScanInfoItem>
-                  <ScanInfoLabel>Acciones</ScanInfoLabel>
-                  <ScanInfoValue>{scanDetail.max_actions}</ScanInfoValue>
-                </ScanInfoItem>
-                <ScanInfoItem>
-                  <ScanInfoLabel>In-domain</ScanInfoLabel>
-                  <ScanInfoValue>
-                    {scanDetail.in_domain ? "Sí" : "No"}
-                  </ScanInfoValue>
-                </ScanInfoItem>
-              </ScanInfoGrid>
-              {scanDetail.error_message && (
-                <ScanErrorMessage>
-                  ⚠ {scanDetail.error_message}
-                </ScanErrorMessage>
-              )}
-            </ScanInfoSection>
-          </ScanDetailPanel>*/}
-        </>
+        <ScanTerminal logs={scanDetail.logs ?? []} isActive={isActive} />
       )}
     </Container>
   );

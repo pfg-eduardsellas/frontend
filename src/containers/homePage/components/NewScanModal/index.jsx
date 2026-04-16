@@ -1,5 +1,6 @@
-import { useState } from "react";
-import Modal from "../../../../components/modal";
+import { useState } from 'react';
+import Modal from '../../../../components/modal';
+import { useCreateScanMutation } from '../../../../api';
 import {
   FormBody,
   Field,
@@ -11,28 +12,27 @@ import {
   ErrorText,
   PrimaryButton,
   SecondaryButton,
-} from "./styles";
+} from './styles';
 
-function NewScanModal({ isOpen, onClose, onScanCreated, onLogout }) {
-  const [url, setUrl] = useState("");
+function NewScanModal({ isOpen, onClose, onScanCreated }) {
+  const [url, setUrl] = useState('');
   const [maxPages, setMaxPages] = useState(15);
   const [maxDepth, setMaxDepth] = useState(3);
   const [maxActions, setMaxActions] = useState(50);
   const [inDomain, setInDomain] = useState(false);
-  const [formDataRaw, setFormDataRaw] = useState("");
+  const [formDataRaw, setFormDataRaw] = useState('');
   const [formDataError, setFormDataError] = useState(null);
-  const [launching, setLaunching] = useState(false);
-  const [error, setError] = useState(null);
+
+  const [createScan, { isLoading: launching, error: apiError }] = useCreateScanMutation();
 
   const reset = () => {
-    setUrl("");
+    setUrl('');
     setMaxPages(15);
     setMaxDepth(3);
     setMaxActions(50);
     setInDomain(false);
-    setFormDataRaw("");
+    setFormDataRaw('');
     setFormDataError(null);
-    setError(null);
   };
 
   const handleClose = () => {
@@ -49,42 +49,23 @@ function NewScanModal({ isOpen, onClose, onScanCreated, onLogout }) {
         form_data = JSON.parse(formDataRaw);
         setFormDataError(null);
       } catch {
-        setFormDataError("Invalid JSON in Form Data");
+        setFormDataError('Invalid JSON in Form Data');
         return;
       }
     }
 
-    setLaunching(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/scans", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          target_url: url.trim(),
-          max_pages: maxPages,
-          max_depth: maxDepth,
-          max_actions: maxActions,
-          in_domain: inDomain,
-          form_data,
-        }),
-      });
+    const result = await createScan({
+      target_url: url.trim(),
+      max_pages: maxPages,
+      max_depth: maxDepth,
+      max_actions: maxActions,
+      in_domain: inDomain,
+      form_data,
+    });
 
-      if (!res.ok) {
-        if (res.status === 401) onLogout?.();
-        throw new Error(`HTTP ${res.status}`);
-      }
-
-      const newScan = await res.json();
-      onScanCreated?.(newScan);
+    if (!result.error) {
+      onScanCreated?.(result.data);
       handleClose();
-    } catch (e) {
-      setError(`Failed to start scan: ${e.message}`);
-    } finally {
-      setLaunching(false);
     }
   };
 
@@ -93,11 +74,8 @@ function NewScanModal({ isOpen, onClose, onScanCreated, onLogout }) {
       <SecondaryButton onClick={handleClose} disabled={launching}>
         Cancel
       </SecondaryButton>
-      <PrimaryButton
-        onClick={handleSubmit}
-        disabled={launching || !url.trim()}
-      >
-        {launching ? "Launching…" : "Start scan"}
+      <PrimaryButton onClick={handleSubmit} disabled={launching || !url.trim()}>
+        {launching ? 'Launching…' : 'Start scan'}
       </PrimaryButton>
     </>
   );
@@ -118,7 +96,7 @@ function NewScanModal({ isOpen, onClose, onScanCreated, onLogout }) {
             placeholder="https://example.com"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             disabled={launching}
             autoFocus
           />
@@ -186,7 +164,9 @@ function NewScanModal({ isOpen, onClose, onScanCreated, onLogout }) {
           </Field>
         </AdvancedSection>
 
-        {error && <ErrorText>⚠ {error}</ErrorText>}
+        {apiError && (
+          <ErrorText>⚠ Failed to start scan: HTTP {apiError.status}</ErrorText>
+        )}
       </FormBody>
     </Modal>
   );

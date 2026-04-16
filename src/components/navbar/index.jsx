@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import {
   NavContainer,
   LeftSection,
@@ -7,11 +8,18 @@ import {
   SelectWrapper,
   StyledSelectButton,
   PlusButton,
+  DropdownMenu,
+  DropdownItem,
+  DropdownItemTop,
+  DropdownUrl,
+  DropdownMeta,
+  DropdownStatus,
+  DropdownEmpty,
   RightSection,
   UserMenu,
   UserIconWrapper,
   UserName,
-  ChevronIcon
+  ChevronIcon,
 } from './styles';
 
 const GlobeIcon = () => (
@@ -42,7 +50,31 @@ const PlusIcon = () => (
   </svg>
 );
 
-const Navbar = ({ onLogout, onNewScan }) => {
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleString('en-US', {
+    day: '2-digit', month: '2-digit', year: '2-digit',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
+const Navbar = ({ onLogout, onNewScan, scans = [], selectedScan, onSelectScan }) => {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+
+  const activeScan = scans.find((s) => s.id === selectedScan);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
   return (
     <NavContainer>
       <LeftSection>
@@ -53,11 +85,37 @@ const Navbar = ({ onLogout, onNewScan }) => {
           <LogoText>WebTest Pro</LogoText>
         </LogoContainer>
 
-        <SelectWrapper>
-          <StyledSelectButton>
-            <span>Select page</span>
+        <SelectWrapper ref={wrapperRef}>
+          <StyledSelectButton onClick={() => setOpen((v) => !v)}>
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {activeScan ? activeScan.target_url : 'Select scan'}
+            </span>
             <ChevronDownIcon />
           </StyledSelectButton>
+
+          {open && (
+            <DropdownMenu>
+              {scans.length === 0 ? (
+                <DropdownEmpty>No scans yet.</DropdownEmpty>
+              ) : (
+                scans.map((scan) => (
+                  <DropdownItem
+                    key={scan.id}
+                    $active={scan.id === selectedScan}
+                    onClick={() => { onSelectScan(scan.id); setOpen(false); }}
+                  >
+                    <DropdownItemTop>
+                      <DropdownStatus $status={scan.status}>{scan.status}</DropdownStatus>
+                      <DropdownMeta>#{scan.id}</DropdownMeta>
+                    </DropdownItemTop>
+                    <DropdownUrl title={scan.target_url}>{scan.target_url}</DropdownUrl>
+                    <DropdownMeta>{formatDate(scan.created_at)}</DropdownMeta>
+                  </DropdownItem>
+                ))
+              )}
+            </DropdownMenu>
+          )}
+
           <PlusButton onClick={onNewScan} title="New scan">
             <PlusIcon />
           </PlusButton>

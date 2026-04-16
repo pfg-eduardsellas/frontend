@@ -1,7 +1,7 @@
-import Badge from "../../../../components/badge";
-import { BADGE_TYPES } from "../../../../components/badge/constant";
-import GraphViewer from "../../../../components/graph/graphViewer";
-import { Wrapper, GraphHeader } from "./styles";
+import Badge from '../../../../components/badge';
+import { BADGE_TYPES } from '../../../../components/badge/constant';
+import GraphViewer from '../../../../components/graph/graphViewer';
+import { Wrapper, GraphHeader } from './styles';
 
 function LeftSection({ activeScan, selectedScan, testPathMode, selectedPath, onNodeToggle }) {
   return (
@@ -14,7 +14,7 @@ function LeftSection({ activeScan, selectedScan, testPathMode, selectedPath, onN
       </GraphHeader>
 
       <GraphViewer
-        scanId={activeScan?.status === "done" ? selectedScan : null}
+        scanId={activeScan?.status === 'done' ? selectedScan : null}
         testPathMode={testPathMode}
         selectedPath={selectedPath}
         onNodeToggle={onNodeToggle}

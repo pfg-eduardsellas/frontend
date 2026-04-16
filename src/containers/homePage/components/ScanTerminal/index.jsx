@@ -34,7 +34,7 @@ const ANIM_MS = 220;
 
 function ScanTerminal({ logs = [], isActive }) {
   const endRef = useRef(null);
-  const [minimized, setMinimized] = useState(false);
+  const [minimized, setMinimized] = useState(true);
   const [closing, setClosing] = useState(false);
 
   useEffect(() => {
