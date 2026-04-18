@@ -3,6 +3,7 @@ import Navbar from '../../components/navbar';
 import LeftSection from './components/LeftSection';
 import ScanTerminal from './components/ScanTerminal';
 import NewScanModal from './components/NewScanModal';
+import PathRunsModal from './components/PathRunsModal';
 import {
   useGetScansQuery,
   useGetScanQuery,
@@ -29,11 +30,13 @@ import {
   PathItem,
   PathItemText,
   DeleteButton,
+  HistoryButton,
+  UrlInput,
+  FieldLabel,
   ScheduleBox,
   ScheduleTimeInput,
   DayRow,
   DayLabel,
-  RepeatWeekRow,
   ScheduleBadge,
   ErrorList,
   ErrorItem,
@@ -44,13 +47,14 @@ import {
 function HomePage({ onLogout }) {
   const [selectedScan, setSelectedScan] = useState(null);
   const [newScanOpen, setNewScanOpen] = useState(false);
+  const [runModalPath, setRunModalPath] = useState(null);
 
   // ── Test path state ──────────────────────────────────────────────────────
   const [testPathMode, setTestPathMode] = useState(false);
+  const [pathName, setPathName] = useState('');
   const [selectedPath, setSelectedPath] = useState([]);
   const [weekSchedule, setWeekSchedule] = useState(DEFAULT_WEEK_SCHEDULE);
   const [scheduleTime, setScheduleTime] = useState('');
-  const [repeatWeekly, setRepeatWeekly] = useState(false);
 
   // Polling intervals tracked in state so hooks don't reference their own result.
   const [scansPolling, setScansPolling] = useState(POLL_INTERVAL_MS);
@@ -109,10 +113,10 @@ function HomePage({ onLogout }) {
   // ── Helpers ──────────────────────────────────────────────────────────────
   const resetTestPath = () => {
     setTestPathMode(false);
+    setPathName('');
     setSelectedPath([]);
     setWeekSchedule(DEFAULT_WEEK_SCHEDULE);
     setScheduleTime('');
-    setRepeatWeekly(false);
   };
 
   const handleSelectScan = (id) => {
@@ -122,12 +126,17 @@ function HomePage({ onLogout }) {
 
   const handleSavePath = async () => {
     if (!selectedScan || selectedPath.length === 0) return;
+    const selectedDayNums = DAYS
+      .filter(({ key }) => weekSchedule[key])
+      .map(({ num }) => num);
+    const hour = scheduleTime ? String(parseInt(scheduleTime.split(':')[0], 10)) : '';
     const result = await createPath({
       scanId: selectedScan,
+      name: pathName || `Path ${selectedPath.length} nodes`,
       path: selectedPath.join(','),
-      schedule_days: DAYS.filter(({ key }) => weekSchedule[key]).map(({ key }) => key),
-      schedule_time: scheduleTime || null,
-      repeat_weekly: repeatWeekly,
+      enabled: true,
+      days_of_week: selectedDayNums.join(','),
+      hours: hour,
     });
     if (!result.error) resetTestPath();
   };
@@ -210,6 +219,13 @@ function HomePage({ onLogout }) {
 
             {testPathMode ? (
               <>
+                <UrlInput
+                  type="text"
+                  value={pathName}
+                  onChange={(e) => setPathName(e.target.value)}
+                  placeholder="Path name (optional)"
+                />
+
                 <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: 0 }}>
                   {selectedPath.length === 0
                     ? 'Select a URL node to start the path.'
@@ -235,36 +251,15 @@ function HomePage({ onLogout }) {
                     </DayRow>
                   ))}
 
-                  <label
-                    style={{
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      color: '#6b7280',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 4,
-                      paddingTop: 6,
-                      borderTop: '1px solid #e5e7eb',
-                      marginTop: 2,
-                    }}
-                  >
+                  <FieldLabel style={{ paddingTop: 6, borderTop: '1px solid #e5e7eb', marginTop: 2 }}>
                     Time
                     <ScheduleTimeInput
                       type="time"
                       value={scheduleTime}
                       onChange={(e) => setScheduleTime(e.target.value)}
                     />
-                  </label>
+                  </FieldLabel>
 
-                  <RepeatWeekRow>
-                    <input
-                      type="checkbox"
-                      checked={repeatWeekly}
-                      onChange={(e) => setRepeatWeekly(e.target.checked)}
-                      style={{ accentColor: '#6366f1', cursor: 'pointer' }}
-                    />
-                    Repeat every week
-                  </RepeatWeekRow>
                 </ScheduleBox>
 
                 <div style={{ display: 'flex', gap: 6 }}>
@@ -312,6 +307,15 @@ function HomePage({ onLogout }) {
                             <ScheduleBadge>{formatScheduleBadge(p)}</ScheduleBadge>
                           )}
                         </div>
+                        <HistoryButton
+                          onClick={() => setRunModalPath(p)}
+                          title="View run history"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="12 8 12 12 14 14" />
+                            <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
+                          </svg>
+                        </HistoryButton>
                         <DeleteButton
                           onClick={() => handleDeletePath(p.id)}
                           title="Delete path"
@@ -343,6 +347,13 @@ function HomePage({ onLogout }) {
       {scanDetail && (
         <ScanTerminal logs={scanDetail.logs ?? []} isActive={isActive} />
       )}
+
+      <PathRunsModal
+        isOpen={!!runModalPath}
+        onClose={() => setRunModalPath(null)}
+        scanId={selectedScan}
+        path={runModalPath}
+      />
     </Container>
   );
 }

@@ -35,10 +35,10 @@ export const api = createApi({
     }),
 
     register: builder.mutation({
-      query: ({ username, password }) => ({
+      query: ({ username, email, password }) => ({
         url: '/auth/register',
         method: 'POST',
-        body: { username, password },
+        body: { username, email, password },
       }),
     }),
 
@@ -86,6 +86,11 @@ export const api = createApi({
       invalidatesTags: (result, error, { scanId }) => [{ type: 'Path', id: scanId }],
     }),
 
+    // ── Path Runs ─────────────────────────────────────────────────────────
+    getPathRuns: builder.query({
+      query: ({ scanId, pathId }) => `/scans/${scanId}/path/${pathId}/runs`,
+    }),
+
   }),
 });
 
@@ -99,4 +104,5 @@ export const {
   useGetPathsQuery,
   useCreatePathMutation,
   useDeletePathMutation,
+  useGetPathRunsQuery,
 } = api;

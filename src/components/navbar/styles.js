@@ -20,27 +20,16 @@ export const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
-
-export const LogoIconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background-color: #0076f5; /* Adjusted to closely match image */
-  border-radius: 6px;
-  color: white;
-  
-  svg {
-    width: 20px;
-    height: 20px;
-  }
+  height: 100%;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 1rem;
 `;
 
 export const LogoText = styled.span`
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   color: #0f172a;
 `;
 

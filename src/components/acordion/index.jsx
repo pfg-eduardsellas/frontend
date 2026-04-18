@@ -14,6 +14,7 @@ const Accordion = ({
   checked,
   onCheck,
   checkDisabled,
+  headerRight,
 }) => {
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   const canOpen = React.Children.count(children) > 0;
@@ -64,6 +65,7 @@ const Accordion = ({
                 <span className="font-semibold text-slate-700 pr-5">
                   {title}
                 </span>
+                {headerRight}
               </div>
             </>
             <svg

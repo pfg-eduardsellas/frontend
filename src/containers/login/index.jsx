@@ -16,6 +16,7 @@ import {
 export default function Login({ onLogin }) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -32,7 +33,11 @@ export default function Login({ onLogin }) {
     setFormError('');
 
     if (isRegistering) {
-      const regResult = await register({ username, password });
+      if (!email) {
+        setFormError('Please enter your email');
+        return;
+      }
+      const regResult = await register({ username, email, password });
       if (regResult.error) {
         setFormError(regResult.error.data?.detail ?? 'Registration failed');
         return;
@@ -65,6 +70,19 @@ export default function Login({ onLogin }) {
               required
             />
           </InputGroup>
+
+          {isRegistering && (
+            <InputGroup>
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+              />
+            </InputGroup>
+          )}
 
           <InputGroup>
             <Label>Password</Label>

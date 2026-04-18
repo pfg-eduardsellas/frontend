@@ -1,13 +1,13 @@
 export const POLL_INTERVAL_MS = 3000;
 
 export const DAYS = [
-  { key: 'mon', label: 'Mon' },
-  { key: 'tue', label: 'Tue' },
-  { key: 'wed', label: 'Wed' },
-  { key: 'thu', label: 'Thu' },
-  { key: 'fri', label: 'Fri' },
-  { key: 'sat', label: 'Sat' },
-  { key: 'sun', label: 'Sun' },
+  { key: 'mon', label: 'Mon', num: 1 },
+  { key: 'tue', label: 'Tue', num: 2 },
+  { key: 'wed', label: 'Wed', num: 3 },
+  { key: 'thu', label: 'Thu', num: 4 },
+  { key: 'fri', label: 'Fri', num: 5 },
+  { key: 'sat', label: 'Sat', num: 6 },
+  { key: 'sun', label: 'Sun', num: 7 },
 ];
 
 export const DEFAULT_WEEK_SCHEDULE = Object.fromEntries(DAYS.map(({ key }) => [key, false]));
@@ -24,12 +24,13 @@ export function formatDate(dateStr) {
 }
 
 export function formatScheduleBadge(p) {
-  if (!p.schedule_days || p.schedule_days.length === 0) return '';
+  if (!p.days_of_week) return '';
+  const nums = p.days_of_week.split(',').map(Number).filter(Boolean);
+  if (nums.length === 0) return '';
   const dayLabels = DAYS
-    .filter(({ key }) => p.schedule_days.includes(key))
+    .filter(({ num }) => nums.includes(num))
     .map(({ label }) => label)
     .join(', ');
-  const time = p.schedule_time ? ` at ${p.schedule_time}` : '';
-  const repeat = p.repeat_weekly ? ' · Weekly' : '';
-  return `${dayLabels}${time}${repeat}`;
+  const hours = p.hours ? ` · ${p.hours.split(',').map((h) => `${h}:00`).join(', ')}` : '';
+  return `${dayLabels}${hours}`;
 }

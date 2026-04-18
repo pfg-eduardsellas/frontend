@@ -301,6 +301,24 @@ export const DeleteButton = styled.button`
   &:hover { color: #b91c1c; }
 `;
 
+export const HistoryButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0 2px;
+  flex-shrink: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  &:hover { color: #6366f1; }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+`;
+
 const scheduledControlCss = `
   border: 1px solid #d1d5db;
   border-radius: 6px;

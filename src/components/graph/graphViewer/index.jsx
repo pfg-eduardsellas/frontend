@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   ReactFlow,
   Background,
@@ -8,14 +8,19 @@ import {
   addEdge,
   useReactFlow,
   ReactFlowProvider,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import { NODE_TYPES } from './constants';
-import { getLayoutedElements, transformGraphData } from './adapters';
-import { GraphContainer } from './styles';
-import { useGetScanActionsQuery } from '../../../api';
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { NODE_TYPES } from "./constants";
+import { getLayoutedElements, transformGraphData } from "./adapters";
+import { GraphContainer } from "./styles";
+import { useGetScanActionsQuery } from "../../../api";
 
-const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeToggle }) => {
+const GraphLayout = ({
+  scanId,
+  testPathMode = false,
+  selectedPath = [],
+  onNodeToggle,
+}) => {
   const { fitView } = useReactFlow();
   const [baseNodes, setBaseNodes] = useNodesState([]);
   const [baseEdges, setBaseEdges] = useEdgesState([]);
@@ -63,7 +68,7 @@ const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeTo
       const type = n.data?.action?.type;
 
       if (selectedPath.length === 0) {
-        if (type === 'URL') result.add(n.id);
+        if (type === "URL") result.add(n.id);
         return;
       }
 
@@ -103,7 +108,7 @@ const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeTo
           isSelectable: selectableSet.has(n.id),
           onToggle: () => onNodeToggle?.(n.id),
         },
-      }))
+      })),
     );
     setEdges(baseEdges);
 
@@ -111,11 +116,18 @@ const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeTo
       fittedRef.current = true;
       window.requestAnimationFrame(() => fitView());
     }
-  }, [baseNodes, baseEdges, testPathMode, selectedPath, selectableSet, onNodeToggle]);
+  }, [
+    baseNodes,
+    baseEdges,
+    testPathMode,
+    selectedPath,
+    selectableSet,
+    onNodeToggle,
+  ]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    [setEdges],
   );
 
   return (
@@ -123,23 +135,35 @@ const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeTo
       {isLoading && (
         <div
           style={{
-            position: 'absolute', inset: 0, display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(255,255,255,0.8)', zIndex: 10, borderRadius: '8px',
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(255,255,255,0.8)",
+            zIndex: 10,
+            borderRadius: "8px",
           }}
         >
-          <span style={{ fontSize: '1rem', color: '#555' }}>Loading graph…</span>
+          <span style={{ fontSize: "1rem", color: "#555" }}>
+            Loading graph…
+          </span>
         </div>
       )}
       {isError && (
         <div
           style={{
-            position: 'absolute', inset: 0, display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(255,255,255,0.9)', zIndex: 10, borderRadius: '8px',
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(255,255,255,0.9)",
+            zIndex: 10,
+            borderRadius: "8px",
           }}
         >
-          <span style={{ color: '#c0392b', fontSize: '0.9rem' }}>
+          <span style={{ color: "#c0392b", fontSize: "0.9rem" }}>
             ⚠ {error?.error ?? `Error ${error?.status}`}
           </span>
         </div>
@@ -147,11 +171,15 @@ const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeTo
       {!scanId && !isLoading && (
         <div
           style={{
-            position: 'absolute', inset: 0, display: 'flex',
-            alignItems: 'center', justifyContent: 'center', zIndex: 5,
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 5,
           }}
         >
-          <span style={{ color: '#aaa', fontSize: '1rem' }}>
+          <span style={{ color: "#aaa", fontSize: "1rem" }}>
             Select or start a scan to view the graph
           </span>
         </div>
@@ -162,8 +190,9 @@ const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeTo
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        fitView
+        fitView={true}
         nodeTypes={NODE_TYPES}
+        minZoom={0.1}
       >
         <Controls position="top-right" />
         <Background color="#aaa" gap={16} />
@@ -172,7 +201,12 @@ const GraphLayout = ({ scanId, testPathMode = false, selectedPath = [], onNodeTo
   );
 };
 
-export default function GraphViewer({ scanId, testPathMode, selectedPath, onNodeToggle }) {
+export default function GraphViewer({
+  scanId,
+  testPathMode,
+  selectedPath,
+  onNodeToggle,
+}) {
   return (
     <ReactFlowProvider>
       <GraphLayout
