@@ -20,6 +20,7 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
   const [maxDepth, setMaxDepth] = useState(3);
   const [maxActions, setMaxActions] = useState(50);
   const [inDomain, setInDomain] = useState(false);
+  const [accessibility, setAccessibility] = useState(true);
   const [formDataRaw, setFormDataRaw] = useState('');
   const [formDataError, setFormDataError] = useState(null);
 
@@ -31,6 +32,7 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
     setMaxDepth(3);
     setMaxActions(50);
     setInDomain(false);
+    setAccessibility(true);
     setFormDataRaw('');
     setFormDataError(null);
   };
@@ -60,6 +62,7 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
       max_depth: maxDepth,
       max_actions: maxActions,
       in_domain: inDomain,
+      accessibility,
       form_data,
     });
 
@@ -147,6 +150,17 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
               disabled={launching}
             />
             Only scan URLs within the same domain
+          </CheckboxRow>
+
+          <CheckboxRow>
+            <input
+              type="checkbox"
+              checked={accessibility}
+              onChange={(e) => setAccessibility(e.target.checked)}
+              disabled={launching}
+              style={{ accentColor: '#7c3aed' }}
+            />
+            Analyse accessibility (axe-core)
           </CheckboxRow>
 
           <Field>

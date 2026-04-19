@@ -21,8 +21,8 @@ export const Wrapper = styled.div`
 export const RightSection = styled.div`
   display: flex;
   flex-direction: column;
-  width: 320px;
-  min-width: 260px;
+  width: 360px;
+  min-width: 280px;
   gap: 8px;
   overflow-y: auto;
 `;

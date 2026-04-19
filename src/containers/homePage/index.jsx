@@ -4,6 +4,7 @@ import LeftSection from './components/LeftSection';
 import ScanTerminal from './components/ScanTerminal';
 import NewScanModal from './components/NewScanModal';
 import PathRunsModal from './components/PathRunsModal';
+import AccessibilityPanel from './components/AccessibilityPanel';
 import {
   useGetScansQuery,
   useGetScanQuery,
@@ -211,6 +212,15 @@ function HomePage({ onLogout }) {
                 </ErrorList>
               );
             })()}
+          </ScanPanel>
+
+          {/* Accessibility violations */}
+          <ScanPanel style={{ maxHeight: 420, minHeight: 0 }}>
+            <PanelTitle>Accessibility</PanelTitle>
+            <AccessibilityPanel
+              graphActions={graphActions}
+              selectedScan={selectedScan}
+            />
           </ScanPanel>
 
           {/* Test Path */}

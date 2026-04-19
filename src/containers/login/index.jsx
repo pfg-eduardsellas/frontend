@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useLoginMutation, useRegisterMutation } from '../../api';
+import { GoogleLogin } from '@react-oauth/google';
+import { useLoginMutation, useRegisterMutation, useGoogleLoginMutation } from '../../api';
 import {
   LoginContainer,
   LoginCard,
@@ -10,6 +11,8 @@ import {
   Input,
   ButtonGroup,
   Button,
+  GoogleButton,
+  Divider,
   ErrorMessage,
 } from './styles';
 
@@ -22,7 +25,18 @@ export default function Login({ onLogin }) {
 
   const [login, { isLoading: loggingIn }] = useLoginMutation();
   const [register, { isLoading: registering }] = useRegisterMutation();
+  const [googleLogin, { isLoading: googleLoading }] = useGoogleLoginMutation();
   const loading = loggingIn || registering;
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setFormError('');
+    const result = await googleLogin({ credential: credentialResponse.credential });
+    if (result.error) {
+      setFormError(result.error.data?.detail ?? 'Google login failed');
+      return;
+    }
+    onLogin(result.data.access_token, result.data.api_token ?? null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,6 +71,16 @@ export default function Login({ onLogin }) {
     <LoginContainer>
       <LoginCard>
         <Title>PFG Bot Panel</Title>
+
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => setFormError('Google login failed')}
+          width="100%"
+          useOneTap
+        />
+
+        <Divider>or</Divider>
+
         <Form onSubmit={handleSubmit}>
           {formError && <ErrorMessage>{formError}</ErrorMessage>}
 

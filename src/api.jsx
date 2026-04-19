@@ -42,6 +42,14 @@ export const api = createApi({
       }),
     }),
 
+    googleLogin: builder.mutation({
+      query: ({ credential }) => ({
+        url: '/auth/google',
+        method: 'POST',
+        body: { credential },
+      }),
+    }),
+
     // ── Scans ─────────────────────────────────────────────────────────────
     getScans: builder.query({
       query: () => '/scans',
@@ -61,6 +69,11 @@ export const api = createApi({
     // ── Graph / Actions ───────────────────────────────────────────────────
     getScanActions: builder.query({
       query: (scanId) => `/scans/${scanId}/actions`,
+    }),
+
+    // ── Accessibility ─────────────────────────────────────────────────────
+    getScanAccessibility: builder.query({
+      query: (scanId) => `/scans/${scanId}/accessibility`,
     }),
 
     // ── Paths ─────────────────────────────────────────────────────────────
@@ -97,10 +110,12 @@ export const api = createApi({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useGoogleLoginMutation,
   useGetScansQuery,
   useGetScanQuery,
   useCreateScanMutation,
   useGetScanActionsQuery,
+  useGetScanAccessibilityQuery,
   useGetPathsQuery,
   useCreatePathMutation,
   useDeletePathMutation,
