@@ -3,10 +3,14 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1;
+  width: 100%;
+  height: 480px;
+  flex-shrink: 0;
   min-width: 0;
   position: relative;
   background-color: #f5f9fc;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 
 export const GraphHeader = styled.div`

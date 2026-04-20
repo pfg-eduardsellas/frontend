@@ -15,10 +15,13 @@ import { getLayoutedElements, transformGraphData } from "./adapters";
 import { GraphContainer } from "./styles";
 import { useGetScanActionsQuery } from "../../../api";
 
+const EMPTY_PATH = [];
+const EMPTY_SET = new Set();
+
 const GraphLayout = ({
   scanId,
   testPathMode = false,
-  selectedPath = [],
+  selectedPath = EMPTY_PATH,
   onNodeToggle,
 }) => {
   const { fitView } = useReactFlow();
@@ -58,7 +61,7 @@ const GraphLayout = ({
 
   // Compute which nodes can be checked next in test-path mode
   const selectableSet = useMemo(() => {
-    if (!testPathMode || baseNodes.length === 0) return new Set();
+    if (!testPathMode || baseNodes.length === 0) return EMPTY_SET;
     const selectedSet = new Set(selectedPath);
     const result = new Set();
 
@@ -193,6 +196,10 @@ const GraphLayout = ({
         fitView={true}
         nodeTypes={NODE_TYPES}
         minZoom={0.1}
+        zoomOnScroll={false}
+        zoomOnPinch={true}
+        panOnScroll={false}
+        preventScrolling={false}
       >
         <Controls position="top-right" />
         <Background color="#aaa" gap={16} />
