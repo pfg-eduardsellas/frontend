@@ -1,100 +1,118 @@
 import styled from 'styled-components';
 
-export const LoginContainer = styled.div`
+export const PageWrapper = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #f3f4f6;
+  width: 100%;
+  height: 100vh;
   font-family: 'Inter', sans-serif;
 `;
 
-export const LoginCard = styled.div`
+export const RightPane = styled.div`
+  width: 480px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background: white;
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  padding: 3rem 2.5rem;
+`;
+
+export const LoginCard = styled.div`
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 `;
 
 export const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: #111827;
-  text-align: center;
-  margin-bottom: 1.5rem;
+  margin: 0 0 0.35rem;
+`;
+
+export const Subtitle = styled.p`
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 1.75rem;
 `;
 
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 `;
 
 export const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 `;
 
 export const Label = styled.label`
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.7rem;
+  font-weight: 700;
   color: #374151;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 `;
 
 export const Input = styled.input`
-  padding: 0.75rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 1rem;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s;
+  color: #111827;
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &::placeholder { color: #9ca3af; }
 
   &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
   }
 `;
 
-export const ButtonGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-`;
-
-export const Button = styled.button`
-  flex: 1;
-  padding: 0.75rem;
-  background-color: ${props => props.$secondary ? '#f3f4f6' : '#2563eb'};
-  color: ${props => props.$secondary ? '#374151' : 'white'};
-  border: 1px solid ${props => props.$secondary ? '#d1d5db' : 'transparent'};
-  border-radius: 6px;
-  font-weight: 600;
+export const ForgotLink = styled.a`
+  font-size: 0.8rem;
+  color: #7c3aed;
+  text-align: right;
   cursor: pointer;
-  transition: all 0.2s;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+`;
 
-  &:hover {
-    background-color: ${props => props.$secondary ? '#e5e7eb' : '#1d4ed8'};
-  }
-  
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
+export const SignInButton = styled.button`
+  width: 100%;
+  padding: 0.8rem;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 0.25rem;
+
+  &:hover:not(:disabled) { background: #6d28d9; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 `;
 
 export const Divider = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin: 1.25rem 0 0.25rem;
+  margin: 1.25rem 0;
   color: #9ca3af;
-  font-size: 0.875rem;
+  font-size: 0.78rem;
+  font-weight: 500;
 
-  &::before,
-  &::after {
+  &::before, &::after {
     content: '';
     flex: 1;
     height: 1px;
@@ -106,34 +124,45 @@ export const GoogleButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.72rem;
   background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 0.9375rem;
-  font-weight: 500;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: #374151;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
+  transition: background 0.15s, border-color 0.15s;
 
-  &:hover {
-    background: #f9fafb;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
+  &:hover { background: #f9fafb; border-color: #d1d5db; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+`;
 
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
+export const RegisterRow = styled.p`
+  font-size: 0.82rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 1.25rem 0 0;
+`;
+
+export const RegisterLink = styled.span`
+  color: #7c3aed;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover { text-decoration: underline; }
 `;
 
 export const ErrorMessage = styled.div`
-  color: #ef4444;
-  font-size: 0.875rem;
-  text-align: center;
+  color: #dc2626;
+  font-size: 0.8rem;
   background: #fef2f2;
-  padding: 0.5rem;
-  border-radius: 4px;
+  border: 1px solid #fecaca;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
 `;
+
+/* kept for compatibility */
+export const ButtonGroup = styled.div`display: none;`;
+export const Button = styled.button`display: none;`;
