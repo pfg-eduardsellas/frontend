@@ -3,7 +3,8 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  flex: 1;
+  min-height: 0;
   width: 100%;
   background-color: #eef0fd;
 `;
@@ -19,67 +20,34 @@ export const Wrapper = styled.div`
   overflow-y: auto;
 `;
 
+export const GraphSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 480px;
+  flex-shrink: 0;
+  min-width: 0;
+  position: relative;
+  background-color: #f5f9fc;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+export const GraphHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 8px;
+  padding: 8px;
+  position: absolute;
+  z-index: 10;
+`;
+
 export const BottomPanels = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex-shrink: 0;
-`;
-
-export const PanelSectionHeader = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
-  gap: 8px;
-`;
-
-export const PanelSectionTitle = styled.h2`
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #6b7280;
-  margin: 0;
-  flex: 1;
-`;
-
-export const PanelCountBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 5px;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  flex-shrink: 0;
-  background: ${({ $color }) => $color ?? '#e5e7eb'};
-  color: ${({ $textColor }) => $textColor ?? '#374151'};
-`;
-
-export const CollapseIcon = styled.span`
-  font-size: 0.6rem;
-  color: #9ca3af;
-  transition: transform 0.2s;
-  transform: ${({ $open }) => $open ? 'rotate(180deg)' : 'rotate(0deg)'};
-  display: inline-block;
-`;
-
-export const ScanPanel = styled.div`
-  background: white;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 `;
 
 export const PanelTitle = styled.h2`

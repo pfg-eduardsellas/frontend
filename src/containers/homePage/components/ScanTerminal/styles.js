@@ -10,10 +10,6 @@ const slideDown = keyframes`
   to   { transform: translateY(100%); opacity: 0; }
 `;
 
-const tabRise = keyframes`
-  from { transform: translateY(100%); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-`;
 
 export const Container = styled.div`
   position: absolute;
@@ -25,6 +21,8 @@ export const Container = styled.div`
 `;
 
 export const Wrapper = styled.div`
+  position: relative;
+  z-index: 10;
   border: 1px solid #e5e5e5;
   backdrop-filter: blur(24px);
   background:rgba(255, 255, 255, 0.80);

@@ -15,6 +15,8 @@ import {
   DropdownMeta,
   DropdownStatus,
   DropdownEmpty,
+  NavTabs,
+  NavTab,
   RightSection,
   UserMenu,
   UserWrapper,
@@ -118,6 +120,8 @@ const Navbar = ({
   scans = [],
   selectedScan,
   onSelectScan,
+  currentPage,
+  onNavigate,
 }) => {
   const [scanOpen, setScanOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -126,7 +130,7 @@ const Navbar = ({
   const scanRef = useRef(null);
   const userRef = useRef(null);
 
-  const activeScan = scans.find((s) => s.id === selectedScan);
+  const activeScan = selectedScan;
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -171,9 +175,9 @@ const Navbar = ({
                   scans.map((scan) => (
                     <DropdownItem
                       key={scan.id}
-                      $active={scan.id === selectedScan}
+                      $active={scan.id === selectedScan?.id}
                       onClick={() => {
-                        onSelectScan(scan.id);
+                        onSelectScan(scan);
                         setScanOpen(false);
                       }}
                     >
@@ -197,6 +201,20 @@ const Navbar = ({
               <PlusIcon />
             </PlusButton>
           </SelectWrapper>
+          <NavTabs>
+            <NavTab
+              $active={currentPage === "home"}
+              onClick={() => onNavigate("home")}
+            >
+              Dashboard
+            </NavTab>
+            <NavTab
+              $active={currentPage === "testPaths"}
+              onClick={() => onNavigate("testPaths")}
+            >
+              Test Paths
+            </NavTab>
+          </NavTabs>
         </LeftSection>
 
         <RightSection>

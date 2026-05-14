@@ -1,10 +1,10 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: '/api',
+  baseUrl: "/api",
   prepareHeaders: (headers) => {
-    const token = localStorage.getItem('token');
-    if (token) headers.set('Authorization', `Bearer ${token}`);
+    const token = localStorage.getItem("token");
+    if (token) headers.set("Authorization", `Bearer ${token}`);
     return headers;
   },
 });
@@ -13,97 +13,99 @@ const rawBaseQuery = fetchBaseQuery({
 const baseQueryWithAuth = async (args, api, extraOptions) => {
   const result = await rawBaseQuery(args, api, extraOptions);
   if (result.error?.status === 401) {
-    window.dispatchEvent(new CustomEvent('api:unauthorized'));
+    window.dispatchEvent(new CustomEvent("api:unauthorized"));
   }
   return result;
 };
 
 export const api = createApi({
-  reducerPath: 'api',
+  reducerPath: "api",
   baseQuery: baseQueryWithAuth,
-  tagTypes: ['Scan', 'Path'],
+  tagTypes: ["Scan", "Path"],
   endpoints: (builder) => ({
-
-    // ── Auth ──────────────────────────────────────────────────────────────
+    // Auth
     login: builder.mutation({
       query: ({ username, password }) => ({
-        url: '/auth/token',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        url: "/auth/token",
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username, password }).toString(),
       }),
     }),
 
     register: builder.mutation({
       query: ({ username, email, password }) => ({
-        url: '/auth/register',
-        method: 'POST',
+        url: "/auth/register",
+        method: "POST",
         body: { username, email, password },
       }),
     }),
 
     googleLogin: builder.mutation({
       query: ({ credential }) => ({
-        url: '/auth/google',
-        method: 'POST',
+        url: "/auth/google",
+        method: "POST",
         body: { credential },
       }),
     }),
 
-    // ── Scans ─────────────────────────────────────────────────────────────
+    // Scans
     getScans: builder.query({
-      query: () => '/scans',
-      providesTags: ['Scan'],
+      query: () => "/scans",
+      providesTags: ["Scan"],
     }),
 
     getScan: builder.query({
       query: (id) => `/scans/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Scan', id }],
+      providesTags: (result, error, id) => [{ type: "Scan", id }],
     }),
 
     createScan: builder.mutation({
-      query: (body) => ({ url: '/scans', method: 'POST', body }),
-      invalidatesTags: ['Scan'],
+      query: (body) => ({ url: "/scans", method: "POST", body }),
+      invalidatesTags: ["Scan"],
     }),
 
-    // ── Graph / Actions ───────────────────────────────────────────────────
+    // Graph / Actions
     getScanActions: builder.query({
       query: (scanId) => `/scans/${scanId}/actions`,
     }),
 
-    // ── Accessibility ─────────────────────────────────────────────────────
+    // Accessibility
     getScanAccessibility: builder.query({
       query: (scanId) => `/scans/${scanId}/accessibility`,
     }),
 
-    // ── Paths ─────────────────────────────────────────────────────────────
+    // Paths
     getPaths: builder.query({
       query: (scanId) => `/scans/${scanId}/path`,
-      providesTags: (result, error, scanId) => [{ type: 'Path', id: scanId }],
+      providesTags: (result, error, scanId) => [{ type: "Path", id: scanId }],
     }),
 
     createPath: builder.mutation({
       query: ({ scanId, ...body }) => ({
         url: `/scans/${scanId}/path`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: (result, error, { scanId }) => [{ type: 'Path', id: scanId }],
+      invalidatesTags: (result, error, { scanId }) => [
+        { type: "Path", id: scanId },
+      ],
     }),
 
     deletePath: builder.mutation({
       query: ({ scanId, pathId }) => ({
         url: `/scans/${scanId}/path/${pathId}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
-      invalidatesTags: (result, error, { scanId }) => [{ type: 'Path', id: scanId }],
+      invalidatesTags: (result, error, { scanId }) => [
+        { type: "Path", id: scanId },
+      ],
     }),
 
-    // ── Path Runs ─────────────────────────────────────────────────────────
+    // Path Runs
     getPathRuns: builder.query({
       query: ({ scanId, pathId }) => `/scans/${scanId}/path/${pathId}/runs`,
     }),
-
   }),
 });
 

@@ -9,17 +9,18 @@ export const StatsBar = styled.div`
 
 export const StatCard = styled.div`
   flex: 1;
-  background: ${({ $bg }) => $bg};
-  border: 1px solid ${({ $border }) => $border};
+  background: white;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 12px 14px;
-  display: flex;n
+  display: flex;
   gap: 3px;
   min-width: 0;
 `;
+
 export const StatIcon = styled.div`
   font-size: 1.5rem;
-  background: ${({ $color }) => $color};
+  background: #6366f1;
   border-radius: 6px;
   color: white;
   padding: 8px 16px;
@@ -34,7 +35,7 @@ gap: 4px;
 export const StatValue = styled.span`
   font-size: 1.65rem;
   font-weight: 800;
-  color: ${({ $color }) => $color};
+  color: #0f172a;
   line-height: 1;
 `;
 

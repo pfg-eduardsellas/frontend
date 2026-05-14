@@ -2,16 +2,15 @@ import styled from 'styled-components';
 import { BADGE_COLORS } from '../badge/constant';
 
 export const Container = styled.div`
-border: 1px solid #e2e8f0; 
-  border-radius: 0.75rem; 
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  background-color: #ffffffad;
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  box-shadow: ${({ $plain }) => $plain ? '0 1px 6px rgba(0,0,0,0.08)' : '0 4px 30px rgba(0,0,0,0.1)'};
+  background-color: ${({ $plain }) => $plain ? '#ffffff' : '#ffffffad'};
+  backdrop-filter: ${({ $plain }) => $plain ? 'none' : 'blur(5px)'};
+  -webkit-backdrop-filter: ${({ $plain }) => $plain ? 'none' : 'blur(5px)'};
 `;
+
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;

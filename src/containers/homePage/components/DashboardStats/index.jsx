@@ -10,46 +10,15 @@ import {
 } from "./styles";
 
 const STAT_CARDS = [
-  {
-    key: "nodes",
-    label: "Nodes",
-    color: "#6366f1",
-    bg: "#eef2ff",
-    border: "#c7d2fe",
-    icon: "fa-solid fa-circle-nodes",
-  },
-  {
-    key: "pages",
-    label: "Pages",
-    color: "#0070e0",
-    bg: "#dbeafe",
-    border: "#bfdbfe",
-    icon: "fa-solid fa-file-lines",
-  },
-  {
-    key: "errors",
-    label: "Errors",
-    color: "#dc2626",
-    bg: "#fee2e2",
-    border: "#fecaca",
-    icon: "fa-solid fa-triangle-exclamation",
-  },
+  { key: "nodes", label: "Nodes", icon: "fa-solid fa-circle-nodes" },
+  { key: "pages", label: "Pages", icon: "fa-solid fa-file-lines" },
+  { key: "errors", label: "Errors", icon: "fa-solid fa-triangle-exclamation" },
   {
     key: "violations",
     label: "A11y Issues",
-    color: "#ea580c",
-    bg: "#ffedd5",
-    border: "#fed7aa",
     icon: "fa-solid fa-universal-access",
   },
-  {
-    key: "paths",
-    label: "Test Paths",
-    color: "#059669",
-    bg: "#d1fae5",
-    border: "#6ee7b7",
-    icon: "fa-solid fa-route",
-  },
+  { key: "paths", label: "Test Paths", icon: "fa-solid fa-route" },
 ];
 
 function DashboardStats({ graphActions, savedPaths, activeScan }) {
@@ -70,13 +39,13 @@ function DashboardStats({ graphActions, savedPaths, activeScan }) {
   return (
     <StatsBar>
       {STAT_CARDS.map((card) => (
-        <StatCard key={card.key} $bg={card.bg} $border={card.border}>
+        <StatCard key={card.key}>
           <StatInfo>
-            <StatValue $color={card.color}>{values[card.key]}</StatValue>
+            <StatValue>{values[card.key]}</StatValue>
             <StatLabel>{card.label}</StatLabel>
           </StatInfo>
-          <StatIcon $color={card.color}>
-            <i class={card.icon}></i>
+          <StatIcon>
+            <i className={card.icon}></i>
           </StatIcon>
         </StatCard>
       ))}

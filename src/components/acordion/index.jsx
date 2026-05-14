@@ -15,6 +15,7 @@ const Accordion = ({
   onCheck,
   checkDisabled,
   headerRight,
+  plain = false,
 }) => {
   const [isOpen, setIsOpen] = useState(isDefaultOpen);
   const canOpen = React.Children.count(children) > 0;
@@ -29,7 +30,7 @@ const Accordion = ({
 
   return (
     <AccordionContext.Provider value={{ isOpen }}>
-      <Container className={className} $type={type}>
+      <Container className={className} $type={type} $plain={plain}>
         <div className="w-full flex items-center">
           <StyledButton
             onClick={clickHandler}
@@ -38,7 +39,7 @@ const Accordion = ({
             $checkDisabled={checkable && checkDisabled}
           >
             <>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center w-full justify-between">
                 {(checkable && (
                   <span
                     className="flex items-center"

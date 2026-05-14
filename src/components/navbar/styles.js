@@ -155,6 +155,25 @@ export const PlusButton = styled.button`
   }
 `;
 
+export const NavTabs = styled.div`
+  display: flex;
+  gap: 2px;
+`;
+
+export const NavTab = styled.button`
+  background: none;
+  border: none;
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: ${({ $active }) => ($active ? '#6366f1' : '#64748b')};
+  border-bottom: 2px solid ${({ $active }) => ($active ? '#6366f1' : 'transparent')};
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  &:hover { color: #6366f1; }
+`;
+
 export const RightSection = styled.div`
   display: flex;
   align-items: center;

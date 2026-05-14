@@ -85,18 +85,6 @@ export const ImpactBadge = styled.span`
   white-space: nowrap;
 `;
 
-export const RuleId = styled.span`
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #6366f1;
-  font-family: 'Courier New', monospace;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  max-width: 120px;
-`;
-
 export const TruncatedText = styled.span`
   display: -webkit-box;
   -webkit-line-clamp: 2;
