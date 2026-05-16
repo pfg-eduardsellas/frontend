@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import * as colors from 'constants/colors';
 
 export const PageWrapper = styled.div`
   display: flex;
@@ -72,35 +73,18 @@ export const Input = styled.input`
   &::placeholder { color: #9ca3af; }
 
   &:focus {
-    border-color: #7c3aed;
+    border-color: ${colors.PRIMARY_HOVER};
     box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
   }
 `;
 
 export const ForgotLink = styled.a`
   font-size: 0.8rem;
-  color: #7c3aed;
+  color: ${colors.PRIMARY};
   text-align: right;
   cursor: pointer;
   text-decoration: none;
   &:hover { text-decoration: underline; }
-`;
-
-export const SignInButton = styled.button`
-  width: 100%;
-  padding: 0.8rem;
-  background: #7c3aed;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-top: 0.25rem;
-
-  &:hover:not(:disabled) { background: #6d28d9; }
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
 `;
 
 export const Divider = styled.div`
@@ -120,25 +104,6 @@ export const Divider = styled.div`
   }
 `;
 
-export const GoogleButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.72rem;
-  background: white;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-
-  &:hover { background: #f9fafb; border-color: #d1d5db; }
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
-`;
 
 export const RegisterRow = styled.p`
   font-size: 0.82rem;
@@ -163,6 +128,3 @@ export const ErrorMessage = styled.div`
   border-radius: 6px;
 `;
 
-/* kept for compatibility */
-export const ButtonGroup = styled.div`display: none;`;
-export const Button = styled.button`display: none;`;

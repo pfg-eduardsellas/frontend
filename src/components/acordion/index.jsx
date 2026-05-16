@@ -1,6 +1,10 @@
-import React, { useState, createContext, useContext } from "react";
-import { StyledButton, ColorDot, Container } from "./styles";
+﻿import React, { useState, createContext, useContext } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import Button from "../button";
+import { ColorDot, Container } from "./styles";
 import { BADGE_COLORS } from "../badge/constant";
+import * as colors from "constants/colors";
 
 const AccordionContext = createContext();
 
@@ -32,11 +36,13 @@ const Accordion = ({
     <AccordionContext.Provider value={{ isOpen }}>
       <Container className={className} $type={type} $plain={plain}>
         <div className="w-full flex items-center">
-          <StyledButton
+          <Button
+            variant="accordion"
             onClick={clickHandler}
-            $canOpen={canOpen}
-            $type={type}
-            $checkDisabled={checkable && checkDisabled}
+            canOpen={canOpen}
+            checkDisabled={checkable && checkDisabled}
+            bgColor={BADGE_COLORS[type]?.background}
+            bgHoverColor={BADGE_COLORS[type]?.hover}
           >
             <>
               <div className="flex items-center w-full justify-between">
@@ -54,7 +60,8 @@ const Accordion = ({
                       checked={!!checked}
                       disabled={checkDisabled}
                       style={{
-                        accentColor: BADGE_COLORS[type]?.primary || "#6366f1",
+                        accentColor:
+                          BADGE_COLORS[type]?.primary || colors.PRIMARY,
                         cursor: checkDisabled ? "not-allowed" : "pointer",
                         width: 14,
                         height: 14,
@@ -69,24 +76,14 @@ const Accordion = ({
                 {headerRight}
               </div>
             </>
-            <svg
-              className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${
-                isOpen ? "rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              {canOpen && (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              )}
-            </svg>
-          </StyledButton>
+            {canOpen && (
+              <FontAwesomeIcon
+                icon={faChevronDown}
+                className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                style={{ width: 16, height: 16, color: "#64748b" }}
+              />
+            )}
+          </Button>
         </div>
 
         <div

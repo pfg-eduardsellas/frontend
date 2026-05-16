@@ -5,7 +5,8 @@ import {
   useRegisterMutation,
   useGoogleLoginMutation,
 } from "../../api";
-import Back from "../../components/back";
+import Back from "./components/back";
+import Button from "../../components/button";
 import {
   PageWrapper,
   RightPane,
@@ -16,7 +17,6 @@ import {
   InputGroup,
   Label,
   Input,
-  SignInButton,
   Divider,
   ForgotLink,
   RegisterRow,
@@ -138,13 +138,15 @@ export default function Login({ onLogin }) {
               />
             </InputGroup>
 
-            <SignInButton type="submit" disabled={loading}>
-              {loading
-                ? "Loading..."
-                : isRegistering
-                  ? "Create account"
-                  : "Sign in"}
-            </SignInButton>
+            <Button
+              variant="primary"
+              fullWidth
+              type="submit"
+              disabled={loading}
+              style={{ marginTop: "0.25rem", fontSize: "0.95rem", fontWeight: 700, padding: "0.8rem" }}
+            >
+              {loading ? "Loading..." : isRegistering ? "Create account" : "Sign in"}
+            </Button>
           </Form>
 
           <RegisterRow>

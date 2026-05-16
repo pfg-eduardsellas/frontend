@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Button from "../../../../components/button";
 import {
   Container,
   Wrapper,
@@ -7,8 +8,6 @@ import {
   Count,
   LogsWrapper,
   LogLine,
-  MinimizeButton,
-  MinimizedTab,
 } from "./styles";
 
 function formatLog(log) {
@@ -51,10 +50,10 @@ function ScanTerminal({ logs = [], isActive }) {
 
   if (minimized) {
     return (
-      <MinimizedTab onClick={() => setMinimized(false)}>
+      <Button variant="terminal-tab" onClick={() => setMinimized(false)}>
         <i className="fa-solid fa-angle-down"></i> logs
         <Count style={{ color: "#94a3b8", marginLeft: 0 }}>{logs.length}</Count>
-      </MinimizedTab>
+      </Button>
     );
   }
 
@@ -64,9 +63,9 @@ function ScanTerminal({ logs = [], isActive }) {
         <TitleBar>
           <Title>logs</Title>
           <Count>{logs.length} lines</Count>
-          <MinimizeButton onClick={handleMinimize} title="Minimizar">
+          <Button variant="minimize" onClick={handleMinimize} title="Minimizar" style={{ marginLeft: 8 }}>
             <i className="fa-solid fa-angle-down"></i>
-          </MinimizeButton>
+          </Button>
         </TitleBar>
 
         <LogsWrapper>

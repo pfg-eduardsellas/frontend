@@ -59,42 +59,6 @@ export const Count = styled.span`
   margin-left: auto;
 `;
 
-export const MinimizeButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0 2px;
-  margin-left: 8px;
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.45);
-  font-size: 0.75rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  &:hover { color: rgba(0, 0, 0, 0.8); }
-`;
-
-export const MinimizedTab = styled.button`
-  position: fixed;
-  bottom: 0;
-  right: 24px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(58, 58, 58, 0.85);
-  backdrop-filter: blur(8px);
-  border: none;
-  border-radius: 6px 6px 0 0;
-  cursor: pointer;
-  color: #e2e8f0;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
-  &:hover { background: rgba(80, 80, 80, 0.9); }
-`;
 
 export const LogsWrapper = styled.div`
   flex: 1;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import Modal from '../../../../components/modal';
-import { useCreateScanMutation } from '../../../../api';
+import Modal from '../modal';
+import { useCreateScanMutation } from '../../api';
+import Button from '../button';
 import {
   FormBody,
   Field,
@@ -10,8 +11,6 @@ import {
   CheckboxRow,
   AdvancedSection,
   ErrorText,
-  PrimaryButton,
-  SecondaryButton,
 } from './styles';
 
 function NewScanModal({ isOpen, onClose, onScanCreated }) {
@@ -74,12 +73,10 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
 
   const footer = (
     <>
-      <SecondaryButton onClick={handleClose} disabled={launching}>
-        Cancel
-      </SecondaryButton>
-      <PrimaryButton onClick={handleSubmit} disabled={launching || !url.trim()}>
+      <Button variant="secondary" text="Cancel" onClick={handleClose} disabled={launching} />
+      <Button variant="primary" onClick={handleSubmit} disabled={launching || !url.trim()}>
         {launching ? 'Launching…' : 'Start scan'}
-      </PrimaryButton>
+      </Button>
     </>
   );
 

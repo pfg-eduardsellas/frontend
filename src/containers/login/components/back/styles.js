@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-
+import * as colors from 'constants/colors';
 const float1 = keyframes`
   0%   { transform: translate(0, 0) scale(1); }
   33%  { transform: translate(-70px, 60px) scale(1.05); }
@@ -58,7 +58,7 @@ export const Blob = styled.div`
 export const Blob1 = styled(Blob)`
   width: 350px;
   height: 350px;
-  background: #a78bfa;
+  background: ${colors.SECONDARY};
   bottom: -60px;
   right: -60px;
   animation: ${float1} 18s ease-in-out infinite;
@@ -67,7 +67,7 @@ export const Blob1 = styled(Blob)`
 export const Blob2 = styled(Blob)`
   width: 280px;
   height: 280px;
-  background: #5c6ae5;
+  background: ${colors.SECONDARY};
   top: 40%;
   left: 30%;
   animation: ${float2} 20s cubic-bezier(.7,-0.02,.2,1) infinite;
@@ -76,7 +76,7 @@ export const Blob2 = styled(Blob)`
 export const Blob3 = styled(Blob)`
   width: 200px;
   height: 200px;
-  background: #e879f9;
+  background: ${colors.SECONDARY};
   top: 15%;
   right: 10%;
   animation: ${float3} 16s ease-in-out infinite;
@@ -101,7 +101,7 @@ export const BrandDot = styled.span`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #7c3aed;
+  background: ${colors.PRIMARY};
   flex-shrink: 0;
 `;
 
@@ -128,7 +128,7 @@ export const HeroTitle = styled.h1`
 `;
 
 export const HeroHighlight = styled.em`
-  color: #7c3aed;
+  color: ${colors.PRIMARY};
   font-style: italic;
 `;
 

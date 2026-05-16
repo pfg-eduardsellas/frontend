@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+﻿import styled from 'styled-components';
+import * as colors from 'constants/colors';
 
 export const Container = styled.div`
   display: flex;
@@ -6,7 +7,7 @@ export const Container = styled.div`
   flex: 1;
   min-height: 0;
   width: 100%;
-  background-color: #eef0fd;
+  background-color: #EBF0FB;
 `;
 
 export const PageWrapper = styled.div`
@@ -42,21 +43,6 @@ export const ScanContext = styled.p`
   max-width: 500px;
 `;
 
-export const NewPathButton = styled.button`
-  background: #6366f1;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 18px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: background 0.15s;
-  &:hover:not(:disabled) { background: #4f46e5; }
-  &:disabled { background: #a5b4fc; cursor: not-allowed; }
-`;
 
 export const EmptyState = styled.p`
   font-size: 0.9rem;
@@ -132,17 +118,11 @@ export const EmptyCell = styled.td`
   font-size: 0.82rem;
 `;
 
-export const SortIcon = styled.span`
-  margin-left: 4px;
-  font-size: 0.6rem;
-  opacity: 0.6;
-`;
-
 export const ScheduleTag = styled.span`
   font-size: 0.72rem;
   font-weight: 600;
-  color: #6366f1;
-  background: #eef2ff;
+  color: ${colors.SECONDARY_TEXT};
+  background: ${colors.SECONDARY_BG};
   border-radius: 4px;
   padding: 2px 8px;
   white-space: nowrap;
@@ -151,8 +131,8 @@ export const ScheduleTag = styled.span`
 export const NodesBadge = styled.span`
   font-size: 0.68rem;
   font-weight: 700;
-  color: #6366f1;
-  background: #eef2ff;
+  color: ${colors.SECONDARY_TEXT};
+  background: ${colors.SECONDARY_BG};
   border-radius: 999px;
   padding: 1px 7px;
   align-self: flex-start;
@@ -176,39 +156,3 @@ export const ActionCell = styled.div`
   justify-content: flex-end;
 `;
 
-export const HistoryButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: none;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #374151;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  white-space: nowrap;
-  &:hover { border-color: #6366f1; color: #6366f1; }
-
-  svg {
-    width: 12px;
-    height: 12px;
-    flex-shrink: 0;
-  }
-`;
-
-export const DeleteButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #ef4444;
-  cursor: pointer;
-  padding: 5px 8px;
-  border-radius: 6px;
-  transition: background 0.15s;
-  white-space: nowrap;
-  &:hover { background: #fef2f2; }
-`;

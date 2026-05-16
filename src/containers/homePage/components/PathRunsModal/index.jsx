@@ -1,9 +1,14 @@
-import { useMemo } from 'react';
-import { ReactFlow, ReactFlowProvider, Background, Controls } from '@xyflow/react';
-import Modal from '../../../../components/modal';
-import { useGetPathRunsQuery, useGetScanActionsQuery } from '../../../../api';
-import { getLayoutedElements } from '../../../../components/graph/graphViewer/adapters';
-import { NODE_TYPES } from '../../../../components/graph/graphViewer/constants';
+﻿import { useMemo } from "react";
+import {
+  ReactFlow,
+  ReactFlowProvider,
+  Background,
+  Controls,
+} from "@xyflow/react";
+import Modal from "../../../../components/modal";
+import { useGetPathRunsQuery, useGetScanActionsQuery } from "../../../../api";
+import { getLayoutedElements } from "../../../../components/graph/graphViewer/adapters";
+import { NODE_TYPES } from "../../../../components/graph/graphViewer/constants";
 import {
   ModalLayout,
   GraphPanel,
@@ -17,13 +22,16 @@ import {
   RunTime,
   ResultCell,
   EmptyRuns,
-} from './styles';
+} from "./styles";
 
 function formatRunTime(dateStr) {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleString('en-US', {
-    day: '2-digit', month: '2-digit', year: '2-digit',
-    hour: '2-digit', minute: '2-digit',
+  if (!dateStr) return "—";
+  return new Date(dateStr).toLocaleString("en-US", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -35,7 +43,7 @@ function PathGraph({ pathNodeIds, actionsData }) {
 
     const idSet = new Set(pathNodeIds.map(String));
     const filteredActions = actionsData.actions.filter((a) =>
-      idSet.has(String(a.id))
+      idSet.has(String(a.id)),
     );
 
     const orderedActions = pathNodeIds
@@ -46,7 +54,11 @@ function PathGraph({ pathNodeIds, actionsData }) {
       id: String(action.id),
       type: action.type,
       data: {
-        label: `${action.type} ${action.id}: ${action.value || action.selector || ''}`.substring(0, 30),
+        label:
+          `${action.type} ${action.id}: ${action.value || action.selector || ""}`.substring(
+            0,
+            30,
+          ),
         action,
       },
       position: { x: 0, y: 0 },
@@ -57,10 +69,9 @@ function PathGraph({ pathNodeIds, actionsData }) {
       source: String(action.id),
       target: String(orderedActions[i + 1].id),
       animated: false,
-      style: { stroke: '#6366f1' },
     }));
 
-    return getLayoutedElements(nodes, edges, 'LR');
+    return getLayoutedElements(nodes, edges, "LR");
   }, [pathNodeIds, actionsData]);
 
   return (
@@ -81,13 +92,19 @@ function PathGraph({ pathNodeIds, actionsData }) {
 function PathRunsModal({ isOpen, onClose, scanId, path }) {
   const pathId = path?.id ?? null;
   const pathNodeIds = useMemo(
-    () => (path?.path ? path.path.split(',').map((s) => s.trim()).filter(Boolean) : []),
-    [path?.path]
+    () =>
+      path?.path
+        ? path.path
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [],
+    [path?.path],
   );
 
   const { data: runsData = [] } = useGetPathRunsQuery(
     { scanId, pathId },
-    { skip: !isOpen || !scanId || !pathId }
+    { skip: !isOpen || !scanId || !pathId },
   );
 
   const { data: actionsData } = useGetScanActionsQuery(scanId, {
@@ -130,7 +147,7 @@ function PathRunsModal({ isOpen, onClose, scanId, path }) {
                 <RunsTableBody>
                   {runsData.map((run, i) => (
                     <tr key={run.id}>
-                      <td style={{ color: '#9ca3af', width: 36 }}>{i + 1}</td>
+                      <td style={{ color: "#9ca3af", width: 36 }}>{i + 1}</td>
                       <td style={{ width: 90 }}>
                         <RunStatus $status={run.status}>{run.status}</RunStatus>
                       </td>
@@ -140,12 +157,12 @@ function PathRunsModal({ isOpen, onClose, scanId, path }) {
                       <td>
                         {run.result ? (
                           <ResultCell>
-                            {typeof run.result === 'string'
+                            {typeof run.result === "string"
                               ? run.result
                               : JSON.stringify(run.result)}
                           </ResultCell>
                         ) : (
-                          <span style={{ color: '#d1d5db' }}>—</span>
+                          <span style={{ color: "#d1d5db" }}>—</span>
                         )}
                       </td>
                     </tr>

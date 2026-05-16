@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+﻿import styled from 'styled-components';
+import { colors } from 'constants/colors';
 
 export const ModalLayout = styled.div`
   display: flex;
@@ -40,7 +41,7 @@ export const PathInput = styled.input`
   outline: none;
   width: 100%;
   box-sizing: border-box;
-  &:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  &:focus { border-color: ${colors.PRIMARY}; box-shadow: 0 0 0 3px rgba(65,101,213,0.15); }
 `;
 
 export const SelectedPathBox = styled.div`
@@ -66,7 +67,7 @@ export const StepIndex = styled.span`
   font-size: 0.6rem;
   font-weight: 700;
   color: white;
-  background: #6366f1;
+  background: ${colors.PRIMARY};
   border-radius: 50%;
   width: 16px;
   height: 16px;
@@ -108,9 +109,9 @@ export const DayChip = styled.label`
   font-size: 0.65rem;
   font-weight: 700;
   cursor: pointer;
-  border: 1.5px solid ${({ $enabled }) => $enabled ? '#6366f1' : '#e5e7eb'};
-  background: ${({ $enabled }) => $enabled ? '#eef2ff' : 'white'};
-  color: ${({ $enabled }) => $enabled ? '#6366f1' : '#9ca3af'};
+  border: 1.5px solid ${({ $enabled }) => $enabled ? colors.PRIMARY : '#e5e7eb'};
+  background: ${({ $enabled }) => $enabled ? colors.PRIMARY_BG : 'white'};
+  color: ${({ $enabled }) => $enabled ? colors.PRIMARY_TEXT : '#9ca3af'};
   transition: all 0.15s;
   user-select: none;
 
@@ -125,7 +126,7 @@ export const TimeInput = styled.input`
   outline: none;
   width: 100%;
   box-sizing: border-box;
-  &:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  &:focus { border-color: #4165D5; box-shadow: 0 0 0 3px rgba(65,101,213,0.15); }
 `;
 
 export const ButtonRow = styled.div`
@@ -134,20 +135,6 @@ export const ButtonRow = styled.div`
   margin-top: auto;
 `;
 
-export const ActionButton = styled.button`
-  flex: 1;
-  padding: 9px 14px;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: background 0.15s;
-  background: ${({ $secondary }) => $secondary ? '#f3f4f6' : '#6366f1'};
-  color: ${({ $secondary }) => $secondary ? '#374151' : 'white'};
-  &:hover:not(:disabled) { background: ${({ $secondary }) => $secondary ? '#e5e7eb' : '#4f46e5'}; }
-  &:disabled { background: #a5b4fc; cursor: not-allowed; }
-`;
 
 export const FieldLabel = styled.span`
   font-size: 0.72rem;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+﻿import styled from 'styled-components';
 
 export const NavContainer = styled.nav`
   display: flex;
@@ -59,9 +59,9 @@ export const DropdownItem = styled.div`
   padding: 9px 14px;
   cursor: pointer;
   border-bottom: 1px solid #f1f5f9;
-  background: ${({ $active }) => $active ? '#eef2ff' : 'white'};
+  background: ${({ $active }) => $active ? '#EBF0FB' : 'white'};
   &:last-child { border-bottom: none; }
-  &:hover { background: ${({ $active }) => $active ? '#eef2ff' : '#f8fafc'}; }
+  &:hover { background: ${({ $active }) => $active ? '#EBF0FB' : '#f8fafc'}; }
 `;
 
 export const DropdownItemTop = styled.div`
@@ -108,71 +108,12 @@ export const DropdownEmpty = styled.p`
   margin: 0;
 `;
 
-export const StyledSelectButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.5rem 0.875rem;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  color: #0f172a;
-  cursor: pointer;
-  min-width: 170px;
-  
-  &:hover {
-    background-color: #f1f5f9;
-  }
-  
-  svg {
-    width: 16px;
-    height: 16px;
-    color: #64748b;
-  }
-`;
-
-export const PlusButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  color: #0f172a;
-  cursor: pointer;
-  
-  &:hover {
-    background-color: #f1f5f9;
-  }
-  
-  svg {
-    width: 16px;
-    height: 16px;
-  }
-`;
 
 export const NavTabs = styled.div`
   display: flex;
   gap: 2px;
 `;
 
-export const NavTab = styled.button`
-  background: none;
-  border: none;
-  padding: 6px 14px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: ${({ $active }) => ($active ? '#6366f1' : '#64748b')};
-  border-bottom: 2px solid ${({ $active }) => ($active ? '#6366f1' : 'transparent')};
-  cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
-  white-space: nowrap;
-  &:hover { color: #6366f1; }
-`;
 
 export const RightSection = styled.div`
   display: flex;
@@ -237,30 +178,3 @@ export const UserDropdownMenu = styled.div`
   overflow: hidden;
 `;
 
-export const UserDropdownItem = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 14px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: ${({ $danger }) => $danger ? '#dc2626' : '#0f172a'};
-  text-align: left;
-  transition: background 0.12s;
-  border-bottom: ${({ $divider }) => $divider ? '1px solid #f1f5f9' : 'none'};
-
-  &:hover {
-    background: ${({ $danger }) => $danger ? '#fef2f2' : '#f8fafc'};
-  }
-
-  svg {
-    width: 15px;
-    height: 15px;
-    flex-shrink: 0;
-    color: ${({ $danger }) => $danger ? '#dc2626' : '#64748b'};
-  }
-`;

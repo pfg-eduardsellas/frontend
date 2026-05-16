@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Modal from "../modal";
+import Button from "../button";
 import {
   Section,
   SectionTitle,
@@ -7,11 +8,9 @@ import {
   CodeBlock,
   DimLine,
   MetaLine,
-  CopyButton,
   CodeWrapper,
   CodeBlur,
   AcceptNote,
-  RevealButton,
   WarningBox,
   WarningTitle,
   WarningText,
@@ -93,9 +92,13 @@ function TokenModal({ isOpen, onClose }) {
           <CodeWrapper>
             <CodeBlock>
               {revealed && (
-                <CopyButton onClick={handleCopy}>
-                  {copied ? "Copied!" : "Copy"}
-                </CopyButton>
+                <Button
+                  variant="dark"
+                  size="sm"
+                  text={copied ? "Copied!" : "Copy"}
+                  onClick={handleCopy}
+                  style={{ position: "absolute", top: 8, right: 8 }}
+                />
               )}
               <DimLine>{'<!DOCTYPE html>'}</DimLine>
               <DimLine>{'<html lang="en">'}</DimLine>
@@ -110,9 +113,7 @@ function TokenModal({ isOpen, onClose }) {
 
             {!revealed && (
               <CodeBlur>
-                <RevealButton onClick={() => setRevealed(true)}>
-                  Show token
-                </RevealButton>
+                <Button variant="primary" text="Show token" onClick={() => setRevealed(true)} />
               </CodeBlur>
             )}
           </CodeWrapper>

@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,13 +12,13 @@ import TestPathModal from "../homePage/components/TestPathModal";
 import PathRunsModal from "../homePage/components/PathRunsModal";
 import { useGetPathsQuery, useDeletePathMutation } from "../../api";
 import { formatScheduleBadge } from "../homePage/helpers";
+import Button from "../../components/button";
 import {
   Container,
   PageWrapper,
   PageHeader,
   PageTitle,
   ScanContext,
-  NewPathButton,
   EmptyState,
   DisabledNotice,
   TableWrapper,
@@ -30,8 +32,6 @@ import {
   ScheduleTag,
   NodesBadge,
   NodesPath,
-  HistoryButton,
-  DeleteButton,
   ActionCell,
 } from "./styles";
 
@@ -83,35 +83,21 @@ function TestPathsPage({ selectedScan }) {
         header: "",
         cell: ({ row }) => (
           <ActionCell>
-            <HistoryButton
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<FontAwesomeIcon icon={faClockRotateLeft} style={{ width: 12, height: 12 }} />}
+              text="History"
               onClick={() => setRunModalPath(row.original)}
               title="View run history"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="12 8 12 12 14 14" />
-                <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
-              </svg>
-              History
-            </HistoryButton>
-            <DeleteButton
-              onClick={() =>
-                deletePath({
-                  scanId: selectedScan?.id,
-                  pathId: row.original.id,
-                })
-              }
+            />
+            <Button
+              variant="danger"
+              size="sm"
+              text="Delete"
+              onClick={() => deletePath({ scanId: selectedScan?.id, pathId: row.original.id })}
               title="Delete path"
-            >
-              Delete
-            </DeleteButton>
+            />
           </ActionCell>
         ),
       }),
@@ -138,15 +124,13 @@ function TestPathsPage({ selectedScan }) {
               <ScanContext>{selectedScan.target_url}</ScanContext>
             )}
           </div>
-          <NewPathButton
+          <Button
+            variant="primary"
+            text="+ New test path"
             onClick={() => setTestPathOpen(true)}
             disabled={!canCreatePath}
-            title={
-              !canCreatePath ? "The scan must be complete to build a path" : ""
-            }
-          >
-            + New test path
-          </NewPathButton>
+            title={!canCreatePath ? "The scan must be complete to build a path" : ""}
+          />
         </PageHeader>
 
         {!selectedScan && (

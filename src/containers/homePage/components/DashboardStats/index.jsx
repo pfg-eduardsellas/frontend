@@ -3,8 +3,6 @@ import {
   StatLabel,
   StatValue,
   StatsBar,
-  ScanStatusPill,
-  PulsingDot,
   StatIcon,
   StatInfo,
 } from "./styles";
@@ -21,7 +19,7 @@ const STAT_CARDS = [
   { key: "paths", label: "Test Paths", icon: "fa-solid fa-route" },
 ];
 
-function DashboardStats({ graphActions, savedPaths, activeScan }) {
+function DashboardStats({ graphActions, savedPaths }) {
   const values = {
     nodes: graphActions.length,
     pages: graphActions.filter((a) => a.type === "URL").length,
@@ -32,9 +30,6 @@ function DashboardStats({ graphActions, savedPaths, activeScan }) {
     ),
     paths: savedPaths.length,
   };
-
-  const isActive =
-    activeScan?.status === "running" || activeScan?.status === "pending";
 
   return (
     <StatsBar>
@@ -49,12 +44,6 @@ function DashboardStats({ graphActions, savedPaths, activeScan }) {
           </StatIcon>
         </StatCard>
       ))}
-      {activeScan && activeScan.status != "done" && (
-        <ScanStatusPill $status={activeScan.status}>
-          <PulsingDot $animate={isActive} />
-          {activeScan.status}
-        </ScanStatusPill>
-      )}
     </StatsBar>
   );
 }

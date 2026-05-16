@@ -4,7 +4,7 @@ import HomePage from "./containers/homePage/index.jsx";
 import TestPathsPage from "./containers/testPathsPage/index.jsx";
 import Login from "./containers/login/index.jsx";
 import Navbar from "./components/navbar/index.jsx";
-import NewScanModal from "./containers/homePage/components/NewScanModal/index.jsx";
+import NewScanModal from "./components/newScanModal/index.jsx";
 import { useGetScansQuery } from "./api.jsx";
 import { POLL_INTERVAL_MS } from "./containers/homePage/helpers.js";
 

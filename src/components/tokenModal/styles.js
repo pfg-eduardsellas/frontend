@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+﻿import styled from 'styled-components';
 
 export const Section = styled.div`
   display: flex;
@@ -44,21 +44,6 @@ export const MetaLine = styled.span`
   color: #7dd3fc;
 `;
 
-export const CopyButton = styled.button`
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 6px;
-  color: #94a3b8;
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  &:hover { background: #334155; color: #e2e8f0; }
-`;
 
 export const WarningBox = styled.div`
   background: #fff7ed;
@@ -114,16 +99,3 @@ export const AcceptNote = styled.p`
   strong { color: #374151; }
 `;
 
-export const RevealButton = styled.button`
-  background: #cdcdcd;
-  color: black;
-  color: white;
-  border: none;
-  border-radius: 7px;
-  padding: 8px 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-  &:hover { background: #4f46e5; }
-`;
