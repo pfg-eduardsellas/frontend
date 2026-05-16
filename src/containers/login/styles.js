@@ -113,7 +113,7 @@ export const RegisterRow = styled.p`
 `;
 
 export const RegisterLink = styled.span`
-  color: #7c3aed;
+  color: ${colors.PRIMARY};
   font-weight: 600;
   cursor: pointer;
   &:hover { text-decoration: underline; }
