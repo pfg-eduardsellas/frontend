@@ -6,7 +6,7 @@ import TestPathsPage from "./containers/testPathsPage/index.jsx";
 import Login from "./containers/login/index.jsx";
 import Navbar from "./components/navbar/index.jsx";
 import NewScanModal from "./components/newScanModal/index.jsx";
-import { useGetScansQuery } from "./api.jsx";
+import { useGetScansQuery, useGetScanQuery } from "./api.jsx";
 import { POLL_INTERVAL_MS } from "./containers/homePage/helpers.js";
 
 const AppFrame = styled.div`
@@ -24,12 +24,19 @@ const PageArea = styled.div`
 
 function AuthenticatedApp({ onLogout }) {
   const [currentPage, setCurrentPage] = useState("home");
-  const [selectedScan, setSelectedScan] = useState(null);
+  const [selectedScanId, setSelectedScanId] = useState(null);
   const [newScanOpen, setNewScanOpen] = useState(false);
 
   const { data: scans = [] } = useGetScansQuery();
 
-  const effectiveSelectedScan = selectedScan ?? scans[0] ?? null;
+  const effectiveScanId = selectedScanId ?? scans[0]?.id ?? null;
+
+  const { data: scanDetail } = useGetScanQuery(effectiveScanId, {
+    skip: !effectiveScanId,
+  });
+
+  const listScan = scans.find((s) => s.id === effectiveScanId) ?? null;
+  const effectiveSelectedScan = scanDetail ?? listScan;
 
   const hasRunning = scans.some(
     (s) => s.status === "running" || s.status === "pending",
@@ -46,7 +53,7 @@ function AuthenticatedApp({ onLogout }) {
         onNewScan={() => setNewScanOpen(true)}
         scans={scans}
         selectedScan={effectiveSelectedScan}
-        onSelectScan={setSelectedScan}
+        onSelectScan={(scan) => setSelectedScanId(scan.id)}
         currentPage={currentPage}
         onNavigate={setCurrentPage}
       />
@@ -63,7 +70,7 @@ function AuthenticatedApp({ onLogout }) {
         isOpen={newScanOpen}
         onClose={() => setNewScanOpen(false)}
         onScanCreated={(newScan) => {
-          setSelectedScan(newScan.id);
+          setSelectedScanId(newScan.id);
           setNewScanOpen(false);
         }}
       />
