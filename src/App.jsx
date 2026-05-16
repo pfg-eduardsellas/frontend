@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { googleLogout } from "@react-oauth/google";
 import styled from "styled-components";
 import HomePage from "./containers/homePage/index.jsx";
 import TestPathsPage from "./containers/testPathsPage/index.jsx";
@@ -80,6 +81,7 @@ function App() {
   };
 
   const handleLogout = () => {
+    googleLogout();
     localStorage.removeItem("token");
     localStorage.removeItem("api_token");
     setToken(null);
