@@ -1,5 +1,5 @@
 ﻿import styled from 'styled-components';
-import { colors } from 'constants/colors';
+import * as colors from 'constants/colors';
 
 export const ModalLayout = styled.div`
   display: flex;
