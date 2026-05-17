@@ -6,7 +6,9 @@ import TestPathsPage from "./containers/testPathsPage/index.jsx";
 import Login from "./containers/login/index.jsx";
 import Navbar from "./components/navbar/index.jsx";
 import NewScanModal from "./components/newScanModal/index.jsx";
-import { useGetScansQuery, useGetScanQuery } from "./api.jsx";
+import { useGetScansQuery, useGetScanQuery, useDeleteScanMutation } from "./api.jsx";
+import Modal from "./components/modal";
+import Button from "./components/button";
 import { POLL_INTERVAL_MS } from "./containers/homePage/helpers.js";
 
 const AppFrame = styled.div`
@@ -26,8 +28,10 @@ function AuthenticatedApp({ onLogout }) {
   const [currentPage, setCurrentPage] = useState("home");
   const [selectedScanId, setSelectedScanId] = useState(null);
   const [newScanOpen, setNewScanOpen] = useState(false);
+  const [scanToDelete, setScanToDelete] = useState(null);
 
   const { data: scans = [] } = useGetScansQuery();
+  const [deleteScan, { isLoading: deleting }] = useDeleteScanMutation();
 
   const effectiveScanId = selectedScanId ?? scans[0]?.id ?? null;
 
@@ -46,6 +50,12 @@ function AuthenticatedApp({ onLogout }) {
     pollingInterval: POLL_INTERVAL_MS,
   });
 
+  const handleConfirmDelete = async () => {
+    await deleteScan(scanToDelete.id);
+    if (scanToDelete.id === selectedScanId) setSelectedScanId(null);
+    setScanToDelete(null);
+  };
+
   return (
     <AppFrame>
       <Navbar
@@ -62,7 +72,7 @@ function AuthenticatedApp({ onLogout }) {
         {currentPage === "testPaths" ? (
           <TestPathsPage selectedScan={effectiveSelectedScan} />
         ) : (
-          <HomePage selectedScan={effectiveSelectedScan} />
+          <HomePage selectedScan={effectiveSelectedScan} onDeleteScan={setScanToDelete} />
         )}
       </PageArea>
 
@@ -74,6 +84,22 @@ function AuthenticatedApp({ onLogout }) {
           setNewScanOpen(false);
         }}
       />
+
+      <Modal
+        isOpen={!!scanToDelete}
+        onClose={() => setScanToDelete(null)}
+        title="Delete scan"
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" text="Cancel" onClick={() => setScanToDelete(null)} disabled={deleting} />
+            <Button variant="danger" text={deleting ? "Deleting…" : "Delete"} onClick={handleConfirmDelete} disabled={deleting} />
+          </>
+        }
+      >
+        Are you sure you want to delete the scan for{" "}
+        <strong>{scanToDelete?.target_url}</strong>? This action cannot be undone.
+      </Modal>
     </AppFrame>
   );
 }

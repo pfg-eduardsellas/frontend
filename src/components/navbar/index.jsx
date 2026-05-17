@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faPlus, faKey, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronDown,
+  faPlus,
+  faKey,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import TokenModal from "../tokenModal";
 import Button from "../button";
@@ -85,7 +90,13 @@ const Navbar = ({
 
           <SelectWrapper ref={scanRef}>
             <Button variant="select" onClick={() => setScanOpen((v) => !v)}>
-              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {activeScan ? activeScan.target_url : "Select scan"}
               </span>
               <ChevronDownIcon />
@@ -121,11 +132,28 @@ const Navbar = ({
               </DropdownMenu>
             )}
 
-            <Button variant="icon" onClick={onNewScan} title="New scan" icon={<PlusIcon />} />
+            <Button
+              variant="icon"
+              onClick={onNewScan}
+              title="New scan"
+              icon={<PlusIcon />}
+            />
           </SelectWrapper>
           <NavTabs>
-            <Button variant="tab" active={currentPage === "home"} onClick={() => onNavigate("home")}>Dashboard</Button>
-            <Button variant="tab" active={currentPage === "testPaths"} onClick={() => onNavigate("testPaths")}>Test Paths</Button>
+            <Button
+              variant="tab"
+              active={currentPage === "home"}
+              onClick={() => onNavigate("home")}
+            >
+              Dashboard
+            </Button>
+            <Button
+              variant="tab"
+              active={currentPage === "testPaths"}
+              onClick={() => onNavigate("testPaths")}
+            >
+              Test Paths
+            </Button>
           </NavTabs>
         </LeftSection>
 
@@ -148,14 +176,20 @@ const Navbar = ({
                   divider
                   icon={<KeyIcon />}
                   text="Verification token"
-                  onClick={() => { setTokenModalOpen(true); setUserOpen(false); }}
+                  onClick={() => {
+                    setTokenModalOpen(true);
+                    setUserOpen(false);
+                  }}
                 />
                 <Button
                   variant="menu-item"
                   danger
                   icon={<LogOutIcon />}
                   text="Sign out"
-                  onClick={() => { setUserOpen(false); onLogout(); }}
+                  onClick={() => {
+                    setUserOpen(false);
+                    onLogout();
+                  }}
                 />
               </UserDropdownMenu>
             )}

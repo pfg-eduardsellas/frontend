@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import ScanTerminal from "./components/ScanTerminal";
 import DashboardStats from "./components/DashboardStats";
 import ErrorsTable from "./components/ErrorsTable";
@@ -6,6 +8,7 @@ import GraphViewer from "../../components/graph/graphViewer";
 import Accordion from "../../components/acordion";
 import CounterBadge from "../../components/counterBadge";
 import Badge from "../../components/badge";
+import Button from "../../components/button";
 import { BADGE_TYPES } from "../../components/badge/constant";
 import { useGetScanActionsQuery } from "../../api";
 import {
@@ -14,9 +17,14 @@ import {
   GraphSection,
   GraphHeader,
   BottomPanels,
+  ScanHeader,
+  ScanHeaderInfo,
+  ScanHeaderUrl,
+  StatusBadge,
+  Row,
 } from "./styles";
 
-function HomePage({ selectedScan }) {
+function HomePage({ selectedScan, onDeleteScan }) {
   const { data: actionsData } = useGetScanActionsQuery(selectedScan?.id, {
     skip: !selectedScan || selectedScan.status !== "done",
   });
@@ -37,11 +45,36 @@ function HomePage({ selectedScan }) {
   return (
     <Container>
       <Wrapper>
-        <DashboardStats
-          graphActions={graphActions}
-          savedPaths={[]}
-          activeScan={selectedScan}
-        />
+        <ScanHeader>
+          <Row>
+            <ScanHeaderInfo>
+              <StatusBadge $status={selectedScan.status}>
+                {selectedScan.status}
+              </StatusBadge>
+              <ScanHeaderUrl title={selectedScan.target_url}>
+                {selectedScan.target_url}
+              </ScanHeaderUrl>
+            </ScanHeaderInfo>
+            <Button
+              variant="danger"
+              size="sm"
+              disabled={!selectedScan}
+              icon={
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  style={{ width: 11, height: 11 }}
+                />
+              }
+              text="Delete scan"
+              onClick={() => onDeleteScan(selectedScan)}
+            />
+          </Row>
+          <DashboardStats
+            graphActions={graphActions}
+            savedPaths={[]}
+            activeScan={selectedScan}
+          />
+        </ScanHeader>
 
         <GraphSection>
           <GraphHeader>

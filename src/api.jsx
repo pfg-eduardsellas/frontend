@@ -65,6 +65,11 @@ export const api = createApi({
       invalidatesTags: ["Scan"],
     }),
 
+    deleteScan: builder.mutation({
+      query: (id) => ({ url: `/scans/${id}`, method: "DELETE" }),
+      invalidatesTags: ["Scan"],
+    }),
+
     // Graph / Actions
     getScanActions: builder.query({
       query: (scanId) => `/scans/${scanId}/actions`,
@@ -116,6 +121,7 @@ export const {
   useGetScansQuery,
   useGetScanQuery,
   useCreateScanMutation,
+  useDeleteScanMutation,
   useGetScanActionsQuery,
   useGetScanAccessibilityQuery,
   useGetPathsQuery,
