@@ -53,6 +53,8 @@ export const Container = styled.div`
   min-height: 0;
   width: 100%;
   background-color: #EBF0FB;
+  position: relative;
+  overflow: hidden;
 `;
 
 export const Wrapper = styled.div`

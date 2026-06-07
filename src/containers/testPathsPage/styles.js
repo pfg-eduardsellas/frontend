@@ -60,63 +60,6 @@ export const DisabledNotice = styled.div`
   color: #713f12;
 `;
 
-export const TableWrapper = styled.div`
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-  overflow: auto;
-`;
-
-export const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.82rem;
-`;
-
-export const Thead = styled.thead`
-  position: sticky;
-  top: 0;
-  z-index: 1;
-`;
-
-export const Th = styled.th`
-  padding: 12px 16px;
-  text-align: left;
-  font-weight: 700;
-  color: #6b7280;
-  text-transform: uppercase;
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
-  white-space: nowrap;
-  cursor: ${({ $sortable }) => $sortable ? 'pointer' : 'default'};
-  user-select: none;
-  &:hover { color: ${({ $sortable }) => $sortable ? '#374151' : '#6b7280'}; }
-`;
-
-export const Tbody = styled.tbody``;
-
-export const Tr = styled.tr`
-  border-bottom: 1px solid #f3f4f6;
-  &:last-child { border-bottom: none; }
-  &:hover { background: #fafbff; }
-`;
-
-export const Td = styled.td`
-  padding: 12px 16px;
-  color: #374151;
-  vertical-align: middle;
-  line-height: 1.4;
-`;
-
-export const EmptyCell = styled.td`
-  padding: 48px 16px;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.82rem;
-`;
 
 export const ScheduleTag = styled.span`
   font-size: 0.72rem;

@@ -3,23 +3,10 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-import {
-  FilterBar,
-  FilterChip,
-  TableWrapper,
-  Table,
-  Thead,
-  Th,
-  Tbody,
-  Tr,
-  Td,
-  EmptyCell,
-  ImpactBadge,
-  TruncatedText,
-} from "./styles";
+import DataTable from "../../../../components/dataTable";
+import { FilterBar, FilterChip, ImpactBadge, TruncatedText } from "./styles";
 
 const IMPACT_ORDER = ["critical", "serious", "moderate", "minor"];
 const IMPACT_META = {
@@ -121,51 +108,11 @@ function AccessibilityTable({ graphActions }) {
         })}
       </FilterBar>
 
-      <TableWrapper>
-        <Table>
-          <Thead>
-            {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id}>
-                {hg.headers.map((header) => (
-                  <Th
-                    key={header.id}
-                    style={{ width: header.column.columnDef.size }}
-                    onClick={header.column.getToggleSortingHandler()}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </Th>
-                ))}
-              </tr>
-            ))}
-          </Thead>
-          <Tbody>
-            {table.getRowModel().rows.length === 0 ? (
-              <tr>
-                <EmptyCell colSpan={4}>
-                  No violations{activeFilter ? ` for "${activeFilter}"` : ""}{" "}
-                  recorded.
-                </EmptyCell>
-              </tr>
-            ) : (
-              table.getRowModel().rows.map((row) => (
-                <Tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <Td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </Td>
-                  ))}
-                </Tr>
-              ))
-            )}
-          </Tbody>
-        </Table>
-      </TableWrapper>
+      <DataTable
+        table={table}
+        size="sm"
+        emptyMessage={`No violations${activeFilter ? ` for "${activeFilter}"` : ""} recorded.`}
+      />
     </>
   );
 }

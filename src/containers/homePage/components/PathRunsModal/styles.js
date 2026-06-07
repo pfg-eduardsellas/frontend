@@ -32,43 +32,6 @@ export const RunsPanelTitle = styled.p`
   flex-shrink: 0;
 `;
 
-export const RunsTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.78rem;
-`;
-
-export const RunsTableHead = styled.thead`
-  background: #f1f5f9;
-
-  th {
-    padding: 7px 12px;
-    text-align: left;
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #6b7280;
-    border-bottom: 1px solid #e5e7eb;
-
-    &:first-child { border-radius: 8px 0 0 0; }
-    &:last-child  { border-radius: 0 8px 0 0; }
-  }
-`;
-
-export const RunsTableBody = styled.tbody`
-  tr {
-    border-bottom: 1px solid #f1f5f9;
-    &:last-child { border-bottom: none; }
-    &:hover { background: #f8fafc; }
-  }
-
-  td {
-    padding: 8px 12px;
-    vertical-align: middle;
-    color: #374151;
-  }
-`;
 
 export const RunStatus = styled.span`
   font-size: 0.62rem;
@@ -110,13 +73,6 @@ export const ResultCell = styled.code`
   overflow: hidden;
 `;
 
-export const RunsTableWrapper = styled.div`
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-  max-height: 240px;
-  overflow-y: auto;
-`;
 
 export const EmptyRuns = styled.p`
   font-size: 0.8rem;

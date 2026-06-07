@@ -48,11 +48,11 @@ function HomePage({ selectedScan, onDeleteScan }) {
         <ScanHeader>
           <Row>
             <ScanHeaderInfo>
-              <StatusBadge $status={selectedScan.status}>
-                {selectedScan.status}
+              <StatusBadge $status={selectedScan?.status}>
+                {selectedScan?.status}
               </StatusBadge>
-              <ScanHeaderUrl title={selectedScan.target_url}>
-                {selectedScan.target_url}
+              <ScanHeaderUrl title={selectedScan?.target_url}>
+                {selectedScan?.target_url}
               </ScanHeaderUrl>
             </ScanHeaderInfo>
             <Button

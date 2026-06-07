@@ -1,5 +1,6 @@
 export const PRIMARY = "#4165D5";
 export const PRIMARY_HOVER = "#3254BD";
+export const PRIMARY_TABLE = "#5e7cd3";
 export const PRIMARY_DISABLED = "#93ACEA";
 export const PRIMARY_BG = "#EBF0FB";
 export const PRIMARY_FOCUS = "rgba(65,101,213,0.15)";

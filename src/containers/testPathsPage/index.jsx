@@ -5,9 +5,9 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
+import DataTable from "../../components/dataTable";
 import TestPathModal from "../homePage/components/TestPathModal";
 import PathRunsModal from "../homePage/components/PathRunsModal";
 import { useGetPathsQuery, useDeletePathMutation } from "../../api";
@@ -21,14 +21,6 @@ import {
   ScanContext,
   EmptyState,
   DisabledNotice,
-  TableWrapper,
-  Table,
-  Thead,
-  Th,
-  Tbody,
-  Tr,
-  Td,
-  EmptyCell,
   ScheduleTag,
   NodesBadge,
   NodesPath,
@@ -147,53 +139,10 @@ function TestPathsPage({ selectedScan }) {
         )}
 
         {selectedScan && (
-          <TableWrapper>
-            <Table>
-              <Thead>
-                {table.getHeaderGroups().map((hg) => (
-                  <tr key={hg.id}>
-                    {hg.headers.map((header) => (
-                      <Th
-                        key={header.id}
-                        style={{ width: header.column.columnDef.size }}
-                        $sortable={header.column.getCanSort()}
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                      </Th>
-                    ))}
-                  </tr>
-                ))}
-              </Thead>
-              <Tbody>
-                {table.getRowModel().rows.length === 0 ? (
-                  <tr>
-                    <EmptyCell colSpan={4}>
-                      {canCreatePath
-                        ? "No test paths yet. Create one to start automating."
-                        : "No test paths for this scan."}
-                    </EmptyCell>
-                  </tr>
-                ) : (
-                  table.getRowModel().rows.map((row) => (
-                    <Tr key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <Td key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </Td>
-                      ))}
-                    </Tr>
-                  ))
-                )}
-              </Tbody>
-            </Table>
-          </TableWrapper>
+          <DataTable
+            table={table}
+            emptyMessage={canCreatePath ? "No test paths yet. Create one to start automating." : "No test paths for this scan."}
+          />
         )}
       </PageWrapper>
 

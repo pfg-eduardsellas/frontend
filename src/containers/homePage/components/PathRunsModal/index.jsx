@@ -1,4 +1,6 @@
 ﻿import { useMemo } from "react";
+import { useReactTable, getCoreRowModel, createColumnHelper } from "@tanstack/react-table";
+import DataTable from "../../../../components/dataTable";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -14,15 +16,43 @@ import {
   GraphPanel,
   RunsPanel,
   RunsPanelTitle,
-  RunsTable,
-  RunsTableHead,
-  RunsTableBody,
-  RunsTableWrapper,
   RunStatus,
   RunTime,
   ResultCell,
   EmptyRuns,
 } from "./styles";
+
+const columnHelper = createColumnHelper();
+
+const RUNS_COLUMNS = [
+  columnHelper.display({
+    id: "index",
+    header: "#",
+    cell: ({ row }) => <span style={{ color: "#9ca3af" }}>{row.index + 1}</span>,
+    size: 36,
+  }),
+  columnHelper.accessor("status", {
+    header: "Status",
+    cell: (info) => <RunStatus $status={info.getValue()}>{info.getValue()}</RunStatus>,
+    size: 90,
+  }),
+  columnHelper.accessor("created_at", {
+    header: "Date",
+    cell: (info) => <RunTime>{formatRunTime(info.getValue())}</RunTime>,
+    size: 140,
+  }),
+  columnHelper.accessor("result", {
+    header: "Result",
+    cell: (info) => {
+      const v = info.getValue();
+      return v ? (
+        <ResultCell>{typeof v === "string" ? v : JSON.stringify(v)}</ResultCell>
+      ) : (
+        <span style={{ color: "#d1d5db" }}>—</span>
+      );
+    },
+  }),
+];
 
 function formatRunTime(dateStr) {
   if (!dateStr) return "—";
@@ -111,6 +141,12 @@ function PathRunsModal({ isOpen, onClose, scanId, path }) {
     skip: !isOpen || !scanId,
   });
 
+  const runsTable = useReactTable({
+    data: runsData,
+    columns: RUNS_COLUMNS,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <Modal
       isOpen={isOpen}
@@ -134,42 +170,7 @@ function PathRunsModal({ isOpen, onClose, scanId, path }) {
           {runsData.length === 0 ? (
             <EmptyRuns>No runs recorded yet.</EmptyRuns>
           ) : (
-            <RunsTableWrapper>
-              <RunsTable>
-                <RunsTableHead>
-                  <tr>
-                    <th>#</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Result</th>
-                  </tr>
-                </RunsTableHead>
-                <RunsTableBody>
-                  {runsData.map((run, i) => (
-                    <tr key={run.id}>
-                      <td style={{ color: "#9ca3af", width: 36 }}>{i + 1}</td>
-                      <td style={{ width: 90 }}>
-                        <RunStatus $status={run.status}>{run.status}</RunStatus>
-                      </td>
-                      <td style={{ width: 140 }}>
-                        <RunTime>{formatRunTime(run.created_at)}</RunTime>
-                      </td>
-                      <td>
-                        {run.result ? (
-                          <ResultCell>
-                            {typeof run.result === "string"
-                              ? run.result
-                              : JSON.stringify(run.result)}
-                          </ResultCell>
-                        ) : (
-                          <span style={{ color: "#d1d5db" }}>—</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </RunsTableBody>
-              </RunsTable>
-            </RunsTableWrapper>
+            <DataTable table={runsTable} size="sm" emptyMessage="No runs recorded yet." />
           )}
         </RunsPanel>
       </ModalLayout>

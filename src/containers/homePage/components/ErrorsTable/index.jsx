@@ -3,21 +3,10 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
-import {
-  TableWrapper,
-  Table,
-  Thead,
-  Th,
-  Tbody,
-  Tr,
-  Td,
-  EmptyCell,
-  TypeBadge,
-  SortIcon,
-} from "./styles";
+import DataTable from "../../../../components/dataTable";
+import { TypeBadge } from "./styles";
 
 const columnHelper = createColumnHelper();
 
@@ -59,47 +48,7 @@ function ErrorsTable({ graphActions }) {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  return (
-    <TableWrapper>
-      <Table>
-        <Thead>
-          {table.getHeaderGroups().map((hg) => (
-            <tr key={hg.id}>
-              {hg.headers.map((header) => (
-                <Th
-                  key={header.id}
-                  style={{ width: header.column.columnDef.size }}
-                  onClick={header.column.getToggleSortingHandler()}
-                >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </Th>
-              ))}
-            </tr>
-          ))}
-        </Thead>
-        <Tbody>
-          {table.getRowModel().rows.length === 0 ? (
-            <tr>
-              <EmptyCell colSpan={3}>No errors recorded.</EmptyCell>
-            </tr>
-          ) : (
-            table.getRowModel().rows.map((row) => (
-              <Tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <Td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Td>
-                ))}
-              </Tr>
-            ))
-          )}
-        </Tbody>
-      </Table>
-    </TableWrapper>
-  );
+  return <DataTable table={table} size="sm" emptyMessage="No errors recorded." />;
 }
 
 export default ErrorsTable;
