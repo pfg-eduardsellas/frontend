@@ -141,3 +141,86 @@ export const FieldLabel = styled.span`
   font-weight: 600;
   color: #6b7280;
 `;
+
+export const StepBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+export const StepHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: #374151;
+`;
+
+export const StepLabel = styled.span`
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const AddAssertBtn = styled.button`
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme?.primary || '#4165D5'};
+  background: none;
+  border: 1px dashed currentColor;
+  border-radius: 4px;
+  padding: 1px 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  &:hover { background: rgba(65,101,213,0.07); }
+`;
+
+export const AssertionList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 22px;
+`;
+
+export const AssertionRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 3px;
+`;
+
+export const AssertionSelect = styled.select`
+  font-size: 0.65rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 2px 4px;
+  background: white;
+  color: #374151;
+  outline: none;
+  flex-shrink: 0;
+  &:focus { border-color: #4165D5; }
+`;
+
+export const AssertionInput = styled.input`
+  font-size: 0.65rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 2px 5px;
+  min-width: 0;
+  flex: 1;
+  outline: none;
+  &:focus { border-color: #4165D5; }
+`;
+
+export const RemoveAssertBtn = styled.button`
+  font-size: 0.7rem;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 2px;
+  flex-shrink: 0;
+  line-height: 1;
+  &:hover { color: #ef4444; }
+`;
