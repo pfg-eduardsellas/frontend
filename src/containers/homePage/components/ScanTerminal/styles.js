@@ -10,10 +10,6 @@ const slideDown = keyframes`
   to   { transform: translateY(100%); opacity: 0; }
 `;
 
-const tabRise = keyframes`
-  from { transform: translateY(100%); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-`;
 
 export const Container = styled.div`
   position: absolute;
@@ -25,16 +21,27 @@ export const Container = styled.div`
 `;
 
 export const Wrapper = styled.div`
+  position: relative;
+  z-index: 10;
   border: 1px solid #e5e5e5;
-  backdrop-filter: blur(24px);
-  background:rgba(255, 255, 255, 0.80);
+  color:white;
   border-radius: 14px;
   overflow: hidden;
   width: 100%;
   max-height: inherit;
   display: flex;
   flex-direction: column;
-  flex:1;
+  flex: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    background: rgba(44, 44, 44, 0.95);
+    z-index: -1;
+  }
 `;
 
 export const TitleBar = styled.div`
@@ -42,61 +49,22 @@ export const TitleBar = styled.div`
   align-items: center;
   gap: 8px;
   padding: 5px 12px;
-  background: #e7e7e7cc;
+  background: #646464cc;
   flex-shrink: 0;
 `;
 
 export const Title = styled.span`
   font-size: 0.65rem;
   font-weight: 700;
-  color:rgba(0, 0, 0, 0.51), 0);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  
 `;
 
 export const Count = styled.span`
   font-size: 0.62rem;
-  color:rgb(0, 0, 0);
+  color:rgb(255, 255, 255);
   margin-left: auto;
 `;
 
-export const MinimizeButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0 2px;
-  margin-left: 8px;
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.45);
-  font-size: 0.75rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  &:hover { color: rgba(0, 0, 0, 0.8); }
-`;
-
-export const MinimizedTab = styled.button`
-  position: fixed;
-  bottom: 0;
-  right: 24px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(58, 58, 58, 0.85);
-  backdrop-filter: blur(8px);
-  border: none;
-  border-radius: 6px 6px 0 0;
-  cursor: pointer;
-  color: #e2e8f0;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
-  &:hover { background: rgba(80, 80, 80, 0.9); }
-`;
 
 export const LogsWrapper = styled.div`
   flex: 1;
@@ -106,10 +74,18 @@ export const LogsWrapper = styled.div`
   font-size: 0.72rem;
   line-height: 1.6;
   max-height: 100%;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.35); }
 `;
 
 export const LogLine = styled.div`
-  color: #525252;
+  color: #ffffff;
   &::before {
     content: '>  ';
     color: #096;

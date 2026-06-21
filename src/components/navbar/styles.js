@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+﻿import styled from 'styled-components';
 
 export const NavContainer = styled.nav`
   display: flex;
@@ -20,82 +20,100 @@ export const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
-
-export const LogoIconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background-color: #0076f5; /* Adjusted to closely match image */
-  border-radius: 6px;
-  color: white;
-  
-  svg {
-    width: 20px;
-    height: 20px;
-  }
+  height: 100%;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 1rem;
 `;
 
 export const LogoText = styled.span`
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   color: #0f172a;
 `;
 
 export const SelectWrapper = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 `;
 
-export const StyledSelectButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.5rem 0.875rem;
-  background-color: #f8fafc;
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 280px;
+  background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  color: #0f172a;
-  cursor: pointer;
-  min-width: 170px;
-  
-  &:hover {
-    background-color: #f1f5f9;
-  }
-  
-  svg {
-    width: 16px;
-    height: 16px;
-    color: #64748b;
-  }
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
 `;
 
-export const PlusButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  color: #0f172a;
+export const DropdownItem = styled.div`
+  padding: 9px 14px;
   cursor: pointer;
-  
-  &:hover {
-    background-color: #f1f5f9;
-  }
-  
-  svg {
-    width: 16px;
-    height: 16px;
-  }
+  border-bottom: 1px solid #f1f5f9;
+  background: ${({ $active }) => $active ? '#EBF0FB' : 'white'};
+  &:last-child { border-bottom: none; }
+  &:hover { background: ${({ $active }) => $active ? '#EBF0FB' : '#f8fafc'}; }
 `;
+
+export const DropdownItemTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+`;
+
+export const DropdownUrl = styled.p`
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const DropdownMeta = styled.span`
+  font-size: 0.7rem;
+  color: #94a3b8;
+`;
+
+export const DropdownStatus = styled.span`
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: ${({ $status }) => ({
+    pending: '#fef3c7', running: '#dbeafe', done: '#d1fae5', error: '#fee2e2',
+  }[$status] ?? '#f3f4f6')};
+  color: ${({ $status }) => ({
+    pending: '#92400e', running: '#1e40af', done: '#065f46', error: '#991b1b',
+  }[$status] ?? '#374151')};
+`;
+
+export const DropdownEmpty = styled.p`
+  font-size: 0.8rem;
+  color: #94a3b8;
+  padding: 12px 14px;
+  margin: 0;
+`;
+
+
+export const NavTabs = styled.div`
+  display: flex;
+  gap: 2px;
+`;
+
 
 export const RightSection = styled.div`
   display: flex;
@@ -136,9 +154,27 @@ export const ChevronIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: #64748b;
-  
+
   svg {
     width: 16px;
     height: 16px;
   }
 `;
+
+export const UserWrapper = styled.div`
+  position: relative;
+`;
+
+export const UserDropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 200;
+  overflow: hidden;
+`;
+

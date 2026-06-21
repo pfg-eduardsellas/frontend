@@ -65,22 +65,6 @@ export const ModalTitle = styled.h2`
   flex: 1;
 `;
 
-export const CloseButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #94a3b8;
-  font-size: 1rem;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: color 0.15s, background 0.15s;
-  &:hover { color: #475569; background: #f1f5f9; }
-`;
 
 export const ModalBody = styled.div`
   padding: ${({ $padding }) => $padding ?? '20px'};

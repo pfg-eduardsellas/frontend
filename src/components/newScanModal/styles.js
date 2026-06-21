@@ -52,18 +52,6 @@ export const CheckboxRow = styled.label`
   user-select: none;
 `;
 
-export const AdvancedToggle = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #6366f1;
-  cursor: pointer;
-  text-align: left;
-  &:hover { text-decoration: underline; }
-`;
-
 export const AdvancedSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -76,33 +64,6 @@ export const ErrorText = styled.p`
   font-size: 0.75rem;
   color: #dc2626;
   margin: 0;
-`;
-
-export const PrimaryButton = styled.button`
-  background: #6366f1;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 9px 20px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-  &:hover:not(:disabled) { background: #4f46e5; }
-  &:disabled { background: #a5b4fc; cursor: not-allowed; }
-`;
-
-export const SecondaryButton = styled.button`
-  background: none;
-  color: #6b7280;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 9px 20px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  &:hover { border-color: #9ca3af; color: #374151; }
 `;
 
 export const FormBody = styled.div`
