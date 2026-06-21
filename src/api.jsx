@@ -21,7 +21,7 @@ const baseQueryWithAuth = async (args, api, extraOptions) => {
 export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithAuth,
-  tagTypes: ["Scan", "Path"],
+  tagTypes: ["Scan", "Path", "Actions"],
   endpoints: (builder) => ({
     // Auth
     login: builder.mutation({
@@ -70,14 +70,25 @@ export const api = createApi({
       invalidatesTags: ["Scan"],
     }),
 
+    rerunScan: builder.mutation({
+      query: (id) => ({ url: `/scans/${id}/rerun`, method: "POST" }),
+      invalidatesTags: (result, error, id) => [
+        "Scan",
+        { type: "Path", id },
+        { type: "Actions", id },
+      ],
+    }),
+
     // Graph / Actions
     getScanActions: builder.query({
       query: (scanId) => `/scans/${scanId}/actions`,
+      providesTags: (result, error, scanId) => [{ type: "Actions", id: scanId }],
     }),
 
     // Accessibility
     getScanAccessibility: builder.query({
       query: (scanId) => `/scans/${scanId}/accessibility`,
+      providesTags: (result, error, scanId) => [{ type: "Actions", id: scanId }],
     }),
 
     // Paths
@@ -122,6 +133,7 @@ export const {
   useGetScanQuery,
   useCreateScanMutation,
   useDeleteScanMutation,
+  useRerunScanMutation,
   useGetScanActionsQuery,
   useGetScanAccessibilityQuery,
   useGetPathsQuery,

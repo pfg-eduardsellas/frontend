@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import ScanTerminal from "./components/ScanTerminal";
 import DashboardStats from "./components/DashboardStats";
 import ErrorsTable from "./components/ErrorsTable";
@@ -24,11 +24,12 @@ import {
   Row,
 } from "./styles";
 
-function HomePage({ selectedScan, onDeleteScan }) {
+function HomePage({ selectedScan, onDeleteScan, onRerunScan }) {
   const { data: actionsData } = useGetScanActionsQuery(selectedScan?.id, {
     skip: !selectedScan || selectedScan.status !== "done",
   });
-  const graphActions = actionsData?.actions ?? [];
+  const graphActions =
+    selectedScan?.status === "done" ? (actionsData?.actions ?? []) : [];
 
   const isActive =
     selectedScan?.status === "running" || selectedScan?.status === "pending";
@@ -54,7 +55,21 @@ function HomePage({ selectedScan, onDeleteScan }) {
               <ScanHeaderUrl title={selectedScan?.target_url}>
                 {selectedScan?.target_url}
               </ScanHeaderUrl>
+              <Button
+                variant="secondary"
+                size="sm"
+                disabled={!selectedScan || isActive}
+                icon={
+                  <FontAwesomeIcon
+                    icon={faRotateRight}
+                    style={{ width: 11, height: 11 }}
+                  />
+                }
+                text="Rerun scan"
+                onClick={() => onRerunScan(selectedScan)}
+              />
             </ScanHeaderInfo>
+
             <Button
               variant="danger"
               size="sm"
@@ -85,6 +100,7 @@ function HomePage({ selectedScan, onDeleteScan }) {
           </GraphHeader>
           <GraphViewer
             scanId={selectedScan?.status === "done" ? selectedScan.id : null}
+            status={selectedScan?.status}
           />
         </GraphSection>
 

@@ -20,10 +20,12 @@ const EMPTY_SET = new Set();
 
 const GraphLayout = ({
   scanId,
+  status,
   testPathMode = false,
   selectedPath = EMPTY_PATH,
   onNodeToggle,
 }) => {
+  const isRunning = status === "running" || status === "pending";
   const { fitView } = useReactFlow();
   const [baseNodes, setBaseNodes] = useNodesState([]);
   const [baseEdges, setBaseEdges] = useEdgesState([]);
@@ -38,7 +40,7 @@ const GraphLayout = ({
   // Layout graph whenever actions data changes
   useEffect(() => {
     fittedRef.current = false;
-    if (!data) {
+    if (!scanId || !data) {
       setBaseNodes([]);
       setBaseEdges([]);
       return;
@@ -47,7 +49,7 @@ const GraphLayout = ({
     const { nodes: ln, edges: le } = getLayoutedElements(n, e);
     setBaseNodes(ln);
     setBaseEdges(le);
-  }, [data]);
+  }, [scanId, data]);
 
   // Map: nodeId → [parentId, ...] (direct predecessors)
   const predecessorMap = useMemo(() => {
@@ -171,7 +173,36 @@ const GraphLayout = ({
           </span>
         </div>
       )}
-      {!scanId && !isLoading && (
+      {isRunning && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.6rem",
+            zIndex: 5,
+          }}
+        >
+          <span
+            style={{
+              width: 22,
+              height: 22,
+              border: "3px solid #d1d5db",
+              borderTopColor: "#555",
+              borderRadius: "50%",
+              animation: "graph-spin 0.8s linear infinite",
+            }}
+          />
+          <span style={{ color: "#555", fontSize: "1rem" }}>
+            Scan running… the graph will appear when it finishes
+          </span>
+          <style>{`@keyframes graph-spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+      {!scanId && !isRunning && !isLoading && (
         <div
           style={{
             position: "absolute",
@@ -210,6 +241,7 @@ const GraphLayout = ({
 
 export default function GraphViewer({
   scanId,
+  status,
   testPathMode,
   selectedPath,
   onNodeToggle,
@@ -218,6 +250,7 @@ export default function GraphViewer({
     <ReactFlowProvider>
       <GraphLayout
         scanId={scanId}
+        status={status}
         testPathMode={testPathMode}
         selectedPath={selectedPath}
         onNodeToggle={onNodeToggle}

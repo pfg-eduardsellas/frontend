@@ -6,7 +6,12 @@ import TestPathsPage from "./containers/testPathsPage/index.jsx";
 import Login from "./containers/login/index.jsx";
 import Navbar from "./components/navbar/index.jsx";
 import NewScanModal from "./components/newScanModal/index.jsx";
-import { useGetScansQuery, useGetScanQuery, useDeleteScanMutation } from "./api.jsx";
+import {
+  useGetScansQuery,
+  useGetScanQuery,
+  useDeleteScanMutation,
+  useRerunScanMutation,
+} from "./api.jsx";
 import Modal from "./components/modal";
 import Button from "./components/button";
 import { POLL_INTERVAL_MS } from "./containers/homePage/helpers.js";
@@ -29,17 +34,38 @@ function AuthenticatedApp({ onLogout }) {
   const [selectedScanId, setSelectedScanId] = useState(null);
   const [newScanOpen, setNewScanOpen] = useState(false);
   const [scanToDelete, setScanToDelete] = useState(null);
+  const [scanToRerun, setScanToRerun] = useState(null);
 
   const { data: scans = [] } = useGetScansQuery();
   const [deleteScan, { isLoading: deleting }] = useDeleteScanMutation();
+  const [rerunScan, { isLoading: rerunning }] = useRerunScanMutation();
 
   const effectiveScanId = selectedScanId ?? scans[0]?.id ?? null;
 
-  const { data: scanDetail } = useGetScanQuery(effectiveScanId, {
-    skip: !effectiveScanId,
-  });
+  const isActiveStatus = (s) =>
+    s?.status === "running" || s?.status === "pending";
 
   const listScan = scans.find((s) => s.id === effectiveScanId) ?? null;
+  const selectedIsActive = isActiveStatus(listScan);
+
+  const { data: scanDetail, refetch: refetchScanDetail } = useGetScanQuery(
+    effectiveScanId,
+    {
+      skip: !effectiveScanId,
+      pollingInterval: selectedIsActive ? POLL_INTERVAL_MS : 0,
+    },
+  );
+
+  useEffect(() => {
+    if (
+      effectiveScanId &&
+      !isActiveStatus(listScan) &&
+      isActiveStatus(scanDetail)
+    ) {
+      refetchScanDetail();
+    }
+  }, [effectiveScanId, listScan?.status, scanDetail?.status]);
+
   const effectiveSelectedScan = scanDetail ?? listScan;
 
   const hasRunning = scans.some(
@@ -54,6 +80,12 @@ function AuthenticatedApp({ onLogout }) {
     await deleteScan(scanToDelete.id);
     if (scanToDelete.id === selectedScanId) setSelectedScanId(null);
     setScanToDelete(null);
+  };
+
+  const handleConfirmRerun = async () => {
+    const rerun = await rerunScan(scanToRerun.id).unwrap();
+    setSelectedScanId(rerun.id);
+    setScanToRerun(null);
   };
 
   return (
@@ -72,7 +104,11 @@ function AuthenticatedApp({ onLogout }) {
         {currentPage === "testPaths" ? (
           <TestPathsPage selectedScan={effectiveSelectedScan} />
         ) : (
-          <HomePage selectedScan={effectiveSelectedScan} onDeleteScan={setScanToDelete} />
+          <HomePage
+            selectedScan={effectiveSelectedScan}
+            onDeleteScan={setScanToDelete}
+            onRerunScan={setScanToRerun}
+          />
         )}
       </PageArea>
 
@@ -92,13 +128,51 @@ function AuthenticatedApp({ onLogout }) {
         size="sm"
         footer={
           <>
-            <Button variant="secondary" text="Cancel" onClick={() => setScanToDelete(null)} disabled={deleting} />
-            <Button variant="danger" text={deleting ? "Deleting…" : "Delete"} onClick={handleConfirmDelete} disabled={deleting} />
+            <Button
+              variant="secondary"
+              text="Cancel"
+              onClick={() => setScanToDelete(null)}
+              disabled={deleting}
+            />
+            <Button
+              variant="danger"
+              text={deleting ? "Deleting…" : "Delete"}
+              onClick={handleConfirmDelete}
+              disabled={deleting}
+            />
           </>
         }
       >
         Are you sure you want to delete the scan for{" "}
-        <strong>{scanToDelete?.target_url}</strong>? This action cannot be undone.
+        <strong>{scanToDelete?.target_url}</strong>? This action cannot be
+        undone.
+      </Modal>
+
+      <Modal
+        isOpen={!!scanToRerun}
+        onClose={() => setScanToRerun(null)}
+        title="Rerun scan"
+        size="sm"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              text="Cancel"
+              onClick={() => setScanToRerun(null)}
+              disabled={rerunning}
+            />
+            <Button
+              variant="primary"
+              text={rerunning ? "Rerunning…" : "Rerun"}
+              onClick={handleConfirmRerun}
+              disabled={rerunning}
+            />
+          </>
+        }
+      >
+        Rerunning the scan for <strong>{scanToRerun?.target_url}</strong> will
+        delete all its tests, logs and results, and overwrite its actions. This
+        action cannot be undone.
       </Modal>
     </AppFrame>
   );
