@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import Modal from '../modal';
-import { useCreateScanMutation } from '../../api';
-import Button from '../button';
+import { useState } from "react";
+import Modal from "../modal";
+import { useCreateScanMutation } from "../../api";
+import Button from "../button";
+import * as colors from "constants/colors";
 import {
   FormBody,
   Field,
@@ -11,28 +12,31 @@ import {
   CheckboxRow,
   AdvancedSection,
   ErrorText,
-} from './styles';
+} from "./styles";
 
 function NewScanModal({ isOpen, onClose, onScanCreated }) {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [maxPages, setMaxPages] = useState(15);
   const [maxDepth, setMaxDepth] = useState(3);
   const [maxActions, setMaxActions] = useState(50);
   const [inDomain, setInDomain] = useState(false);
   const [accessibility, setAccessibility] = useState(true);
-  const [formDataRaw, setFormDataRaw] = useState('');
+  const [objective, setObjective] = useState("");
+  const [formDataRaw, setFormDataRaw] = useState("");
   const [formDataError, setFormDataError] = useState(null);
 
-  const [createScan, { isLoading: launching, error: apiError }] = useCreateScanMutation();
+  const [createScan, { isLoading: launching, error: apiError }] =
+    useCreateScanMutation();
 
   const reset = () => {
-    setUrl('');
+    setUrl("");
     setMaxPages(15);
     setMaxDepth(3);
     setMaxActions(50);
     setInDomain(false);
     setAccessibility(true);
-    setFormDataRaw('');
+    setObjective("");
+    setFormDataRaw("");
     setFormDataError(null);
   };
 
@@ -50,13 +54,14 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
         form_data = JSON.parse(formDataRaw);
         setFormDataError(null);
       } catch {
-        setFormDataError('Invalid JSON in Form Data');
+        setFormDataError("Invalid JSON in Form Data");
         return;
       }
     }
 
     const result = await createScan({
       target_url: url.trim(),
+      objective: objective.trim() || null,
       max_pages: maxPages,
       max_depth: maxDepth,
       max_actions: maxActions,
@@ -73,9 +78,18 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
 
   const footer = (
     <>
-      <Button variant="secondary" text="Cancel" onClick={handleClose} disabled={launching} />
-      <Button variant="primary" onClick={handleSubmit} disabled={launching || !url.trim()}>
-        {launching ? 'Launching…' : 'Start scan'}
+      <Button
+        variant="secondary"
+        text="Cancel"
+        onClick={handleClose}
+        disabled={launching}
+      />
+      <Button
+        variant="primary"
+        onClick={handleSubmit}
+        disabled={launching || !url.trim()}
+      >
+        {launching ? "Launching…" : "Start scan"}
       </Button>
     </>
   );
@@ -96,9 +110,23 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
             placeholder="https://example.com"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             disabled={launching}
             autoFocus
+          />
+        </Field>
+
+        <Field>
+          AI Objective{" "}
+          <span style={{ fontWeight: 400, opacity: 0.6 }}>
+            (Experimental -optional — enables AI-driven scan)
+          </span>
+          <TextArea
+            placeholder="e.g. Log in and navigate to the dashboard"
+            value={objective}
+            onChange={(e) => setObjective(e.target.value)}
+            disabled={launching}
+            rows={2}
           />
         </Field>
 
@@ -145,6 +173,7 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
               checked={inDomain}
               onChange={(e) => setInDomain(e.target.checked)}
               disabled={launching}
+              style={{ accentColor: colors.PRIMARY }}
             />
             Only scan URLs within the same domain
           </CheckboxRow>
@@ -155,7 +184,7 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
               checked={accessibility}
               onChange={(e) => setAccessibility(e.target.checked)}
               disabled={launching}
-              style={{ accentColor: '#7c3aed' }}
+              style={{ accentColor: colors.PRIMARY }}
             />
             Analyse accessibility (axe-core)
           </CheckboxRow>
