@@ -43,7 +43,7 @@ export const transformGraphData = (graphData) => {
     id: action.id.toString(),
     type: action.type,
     data: {
-      label: `${action.type} ${action.id}: ${action.value || action.selector || ''}`.substring(0, 30),
+      label: action.name || action.value || action.selector || `${action.type} ${action.id}`,
       action: action
     },
     position: { x: 0, y: 0 }

@@ -22,7 +22,7 @@ export function ActionNode({ data }) {
       <Handle type="source" position={Position.Right} />
       <Handle type="target" position={Position.Left} />
       <Accordion
-        title={action?.value || action?.selector || "No detail"}
+        title={action?.name || action?.value || action?.selector || "No detail"}
         type={action?.type}
         checkable={testPathMode}
         checked={isSelected}
