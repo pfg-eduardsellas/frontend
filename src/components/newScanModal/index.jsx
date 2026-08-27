@@ -170,17 +170,6 @@ function NewScanModal({ isOpen, onClose, onScanCreated }) {
           <CheckboxRow>
             <input
               type="checkbox"
-              checked={inDomain}
-              onChange={(e) => setInDomain(e.target.checked)}
-              disabled={launching}
-              style={{ accentColor: colors.PRIMARY }}
-            />
-            Only scan URLs within the same domain
-          </CheckboxRow>
-
-          <CheckboxRow>
-            <input
-              type="checkbox"
               checked={accessibility}
               onChange={(e) => setAccessibility(e.target.checked)}
               disabled={launching}

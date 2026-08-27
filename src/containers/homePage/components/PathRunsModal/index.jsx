@@ -1,12 +1,16 @@
-﻿import { useMemo } from "react";
-import { useReactTable, getCoreRowModel, createColumnHelper } from "@tanstack/react-table";
-import DataTable from "../../../../components/dataTable";
+import { useMemo, useState } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
   Background,
   Controls,
 } from "@xyflow/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faXmark,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 import Modal from "../../../../components/modal";
 import { useGetPathRunsQuery, useGetScanActionsQuery } from "../../../../api";
 import { getLayoutedElements } from "../../../../components/graph/graphViewer/adapters";
@@ -18,41 +22,37 @@ import {
   RunsPanelTitle,
   RunStatus,
   RunTime,
-  ResultCell,
   EmptyRuns,
+  RunList,
+  RunCard,
+  RunCardHeader,
+  RunIndex,
+  RunSummary,
+  Chevron,
+  RunDetail,
+  StepItem,
+  StepHead,
+  StepBadge,
+  StepError,
+  AssertItem,
+  AssertIcon,
+  AssertBody,
+  AssertTitle,
+  AssertMeta,
+  AssertErrorText,
+  NoAsserts,
 } from "./styles";
 
-const columnHelper = createColumnHelper();
-
-const RUNS_COLUMNS = [
-  columnHelper.display({
-    id: "index",
-    header: "#",
-    cell: ({ row }) => <span style={{ color: "#9ca3af" }}>{row.index + 1}</span>,
-    size: 36,
-  }),
-  columnHelper.accessor("status", {
-    header: "Status",
-    cell: (info) => <RunStatus $status={info.getValue()}>{info.getValue()}</RunStatus>,
-    size: 90,
-  }),
-  columnHelper.accessor("created_at", {
-    header: "Date",
-    cell: (info) => <RunTime>{formatRunTime(info.getValue())}</RunTime>,
-    size: 140,
-  }),
-  columnHelper.accessor("result", {
-    header: "Result",
-    cell: (info) => {
-      const v = info.getValue();
-      return v ? (
-        <ResultCell>{typeof v === "string" ? v : JSON.stringify(v)}</ResultCell>
-      ) : (
-        <span style={{ color: "#d1d5db" }}>—</span>
-      );
-    },
-  }),
-];
+const ASSERTION_LABELS = {
+  url_equals: "URL equals",
+  url_contains: "URL contains",
+  visible: "Element visible",
+  not_visible: "Element not visible",
+  text_equals: "Text equals",
+  text_contains: "Text contains",
+  value_equals: "Input value equals",
+  count_equals: "Element count equals",
+};
 
 function formatRunTime(dateStr) {
   if (!dateStr) return "—";
@@ -63,6 +63,110 @@ function formatRunTime(dateStr) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function summarizeRun(result) {
+  if (!result || !Array.isArray(result.steps)) return null;
+  let total = 0;
+  let passed = 0;
+  for (const step of result.steps) {
+    for (const a of step.assertions || []) {
+      total += 1;
+      if (a.passed) passed += 1;
+    }
+  }
+  return { total, passed };
+}
+
+function AssertionRowView({ assertion }) {
+  const label = ASSERTION_LABELS[assertion.type] || assertion.type;
+  const meta = [
+    assertion.selector ? `selector: ${assertion.selector}` : null,
+    assertion.expected != null ? `expected: ${assertion.expected}` : null,
+    assertion.actual != null ? `got: ${assertion.actual}` : null,
+  ]
+    .filter(Boolean)
+    .join("  •  ");
+
+  return (
+    <AssertItem>
+      <AssertIcon $ok={assertion.passed}>
+        <FontAwesomeIcon icon={assertion.passed ? faCheck : faXmark} />
+      </AssertIcon>
+      <AssertBody>
+        <AssertTitle>{label}</AssertTitle>
+        {meta && <AssertMeta>{meta}</AssertMeta>}
+        {!assertion.passed && assertion.error && (
+          <AssertErrorText>{assertion.error}</AssertErrorText>
+        )}
+      </AssertBody>
+    </AssertItem>
+  );
+}
+
+function StepView({ step, index }) {
+  const ok = step.status === "pass";
+  const assertions = step.assertions || [];
+  return (
+    <StepItem>
+      <StepHead>
+        <span>
+          {index + 1}. {step.type} #{step.action_id}
+        </span>
+        <StepBadge $ok={ok}>{step.status}</StepBadge>
+      </StepHead>
+      {step.error && <StepError>{step.error}</StepError>}
+      {assertions.length > 0 ? (
+        assertions.map((a, i) => <AssertionRowView key={i} assertion={a} />)
+      ) : (
+        <NoAsserts>No checks on this step</NoAsserts>
+      )}
+    </StepItem>
+  );
+}
+
+function RunRow({ run, index }) {
+  const [open, setOpen] = useState(false);
+  const summary = summarizeRun(run.result);
+  const steps = run.result?.steps || [];
+  const allPassed = summary
+    ? summary.passed === summary.total
+    : run.status === "pass";
+
+  return (
+    <RunCard
+      $status={run.status}
+      $failed={run.status === "fail" || run.status === "error"}
+    >
+      <RunCardHeader onClick={() => setOpen((o) => !o)}>
+        <Chevron $open={open}>
+          <FontAwesomeIcon icon={faChevronRight} />
+        </Chevron>
+        <RunIndex>#{index + 1}</RunIndex>
+        <RunStatus $status={run.status}>{run.status}</RunStatus>
+        <RunTime>{formatRunTime(run.finished_at || run.triggered_at)}</RunTime>
+        {summary && summary.total > 0 && (
+          <RunSummary $allPassed={allPassed}>
+            {summary.passed}/{summary.total} checks passed
+          </RunSummary>
+        )}
+      </RunCardHeader>
+
+      {open && (
+        <RunDetail>
+          {steps.length === 0 ? (
+            <NoAsserts>
+              {run.result
+                ? "No steps recorded."
+                : "Run not finished — no result yet."}
+            </NoAsserts>
+          ) : (
+            steps.map((step, i) => <StepView key={i} step={step} index={i} />)
+          )}
+        </RunDetail>
+      )}
+    </RunCard>
+  );
 }
 
 function PathGraph({ pathNodeIds, actionsData }) {
@@ -141,12 +245,6 @@ function PathRunsModal({ isOpen, onClose, scanId, path }) {
     skip: !isOpen || !scanId,
   });
 
-  const runsTable = useReactTable({
-    data: runsData,
-    columns: RUNS_COLUMNS,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
   return (
     <Modal
       isOpen={isOpen}
@@ -163,14 +261,17 @@ function PathRunsModal({ isOpen, onClose, scanId, path }) {
           </ReactFlowProvider>
         </GraphPanel>
 
-        {/* ── Runs table ── */}
         <RunsPanel>
           <RunsPanelTitle>Runs ({runsData.length})</RunsPanelTitle>
 
           {runsData.length === 0 ? (
             <EmptyRuns>No runs recorded yet.</EmptyRuns>
           ) : (
-            <DataTable table={runsTable} size="sm" emptyMessage="No runs recorded yet." />
+            <RunList>
+              {runsData.map((run, i) => (
+                <RunRow key={run.id} run={run} index={i} />
+              ))}
+            </RunList>
           )}
         </RunsPanel>
       </ModalLayout>

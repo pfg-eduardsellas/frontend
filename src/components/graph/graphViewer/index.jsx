@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
   Background,
   Controls,
+  ControlButton,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -10,6 +11,12 @@ import {
   ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExpand,
+  faCompress,
+  faTriangleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 import { NODE_TYPES } from "./constants";
 import { getLayoutedElements, transformGraphData } from "./adapters";
 import { GraphContainer } from "./styles";
@@ -32,6 +39,8 @@ const GraphLayout = ({
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const fittedRef = useRef(false);
+  const containerRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const { data, isLoading, isError, error } = useGetScanActionsQuery(scanId, {
     skip: !scanId,
@@ -135,8 +144,42 @@ const GraphLayout = ({
     [setEdges],
   );
 
+  const toggleFullscreen = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (el.requestFullscreen) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        el.requestFullscreen();
+      }
+    } else {
+      setIsFullscreen((f) => !f);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isFullscreen || document.fullscreenElement) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") setIsFullscreen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isFullscreen]);
+
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => fitView());
+    return () => window.cancelAnimationFrame(id);
+  }, [isFullscreen, fitView]);
+
   return (
-    <GraphContainer>
+    <GraphContainer ref={containerRef} $fullscreen={isFullscreen}>
       {isLoading && (
         <div
           style={{
@@ -169,7 +212,11 @@ const GraphLayout = ({
           }}
         >
           <span style={{ color: "#c0392b", fontSize: "0.9rem" }}>
-            ⚠ {error?.error ?? `Error ${error?.status}`}
+            <FontAwesomeIcon
+              icon={faTriangleExclamation}
+              style={{ marginRight: "0.4rem" }}
+            />
+            {error?.error ?? `Error ${error?.status}`}
           </span>
         </div>
       )}
@@ -232,7 +279,14 @@ const GraphLayout = ({
         panOnScroll={false}
         preventScrolling={false}
       >
-        <Controls position="top-right" />
+        <Controls position="top-right">
+          <ControlButton
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          >
+            <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} />
+          </ControlButton>
+        </Controls>
         <Background color="#aaa" gap={16} />
       </ReactFlow>
     </GraphContainer>

@@ -23,6 +23,12 @@ export function formatDate(dateStr) {
   });
 }
 
+function utcHourToLocal(h) {
+  const d = new Date();
+  d.setUTCHours(Number(h), 0, 0, 0);
+  return d.getHours();
+}
+
 export function formatScheduleBadge(p) {
   if (!p.days_of_week) return '';
   const nums = p.days_of_week.split(',').map(Number).filter(Boolean);
@@ -31,6 +37,12 @@ export function formatScheduleBadge(p) {
     .filter(({ num }) => nums.includes(num))
     .map(({ label }) => label)
     .join(', ');
-  const hours = p.hours ? ` · ${p.hours.split(',').map((h) => `${h}:00`).join(', ')}` : '';
+  const hours = p.hours
+    ? ` · ${p.hours
+      .split(',')
+      .filter((h) => h !== '')
+      .map((h) => `${String(utcHourToLocal(h)).padStart(2, '0')}:00`)
+      .join(', ')}`
+    : '';
   return `${dayLabels}${hours}`;
 }
