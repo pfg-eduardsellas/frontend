@@ -66,36 +66,4 @@ export const transformGraphData = (graphData) => {
   // 
   return { nodes, edges };
 };
-function adaptNodeData(node) {
-  return {
-    ...node,
-    data: {
-      label: `${node.type} ${node.id}: ${node.value || node.selector || ''}`.substring(0, 30),
-      action: node
-    },
-    position: { x: 0, y: 0 }
-  }
-}
 
-//export const transformGraphData = (graphData) => {
-//  if (!graphData || !graphData.actions) return { nodes: [], edges: [] };
-//
-//  const nodes = graphData.actions.map(action => adaptNodeData(action));
-//
-//  const edges = [];
-//  graphData.actions.forEach(action => {
-//    if (action.successors) {
-//      action.successors.forEach(targetId => {
-//        edges.push({
-//          id: `e${action.id}-${targetId}`,
-//          source: action.id.toString(),
-//          target: targetId.toString(),
-//          animated: false,
-//          style: { stroke: '#000000ff' }
-//        });
-//      });
-//    }
-//  });
-//
-//  return { nodes, edges };
-//};

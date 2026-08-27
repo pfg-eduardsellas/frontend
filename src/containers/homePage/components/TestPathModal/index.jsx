@@ -31,14 +31,54 @@ import {
 } from "./styles";
 
 const ASSERTION_TYPES = [
-  { value: "url_equals",    label: "URL equals",          needsSelector: false, needsExpected: true  },
-  { value: "url_contains",  label: "URL contains",         needsSelector: false, needsExpected: true  },
-  { value: "visible",       label: "Element visible",      needsSelector: true,  needsExpected: false },
-  { value: "not_visible",   label: "Element not visible",  needsSelector: true,  needsExpected: false },
-  { value: "text_equals",   label: "Text equals",          needsSelector: true,  needsExpected: true  },
-  { value: "text_contains", label: "Text contains",        needsSelector: true,  needsExpected: true  },
-  { value: "value_equals",  label: "Input value equals",   needsSelector: true,  needsExpected: true  },
-  { value: "count_equals",  label: "Element count equals", needsSelector: true,  needsExpected: true  },
+  {
+    value: "url_equals",
+    label: "URL equals",
+    needsSelector: false,
+    needsExpected: true,
+  },
+  {
+    value: "url_contains",
+    label: "URL contains",
+    needsSelector: false,
+    needsExpected: true,
+  },
+  {
+    value: "visible",
+    label: "Element visible",
+    needsSelector: true,
+    needsExpected: false,
+  },
+  {
+    value: "not_visible",
+    label: "Element not visible",
+    needsSelector: true,
+    needsExpected: false,
+  },
+  {
+    value: "text_equals",
+    label: "Text equals",
+    needsSelector: true,
+    needsExpected: true,
+  },
+  {
+    value: "text_contains",
+    label: "Text contains",
+    needsSelector: true,
+    needsExpected: true,
+  },
+  {
+    value: "value_equals",
+    label: "Input value equals",
+    needsSelector: true,
+    needsExpected: true,
+  },
+  {
+    value: "count_equals",
+    label: "Element count equals",
+    needsSelector: true,
+    needsExpected: true,
+  },
 ];
 
 function getTypeDef(type) {
@@ -59,9 +99,11 @@ function TestPathModal({ isOpen, onClose, scanId }) {
     const pathSet = new Set(selectedPath.map(String));
     setAssertions((a) => {
       const cleaned = Object.fromEntries(
-        Object.entries(a).filter(([key]) => pathSet.has(key))
+        Object.entries(a).filter(([key]) => pathSet.has(key)),
       );
-      return Object.keys(cleaned).length === Object.keys(a).length ? a : cleaned;
+      return Object.keys(cleaned).length === Object.keys(a).length
+        ? a
+        : cleaned;
     });
   }, [selectedPath]);
 
@@ -76,7 +118,10 @@ function TestPathModal({ isOpen, onClose, scanId }) {
   const addAssertion = useCallback((nodeId) => {
     setAssertions((prev) => ({
       ...prev,
-      [nodeId]: [...(prev[nodeId] || []), { type: "url_contains", selector: "", expected: "" }],
+      [nodeId]: [
+        ...(prev[nodeId] || []),
+        { type: "url_contains", selector: "", expected: "" },
+      ],
     }));
   }, []);
 
@@ -90,15 +135,25 @@ function TestPathModal({ isOpen, onClose, scanId }) {
   const updateAssertion = useCallback((nodeId, idx, field, value) => {
     setAssertions((prev) => ({
       ...prev,
-      [nodeId]: prev[nodeId].map((a, i) => (i === idx ? { ...a, [field]: value } : a)),
+      [nodeId]: prev[nodeId].map((a, i) =>
+        i === idx ? { ...a, [field]: value } : a,
+      ),
     }));
   }, []);
 
   const handleSave = async () => {
     if (!scanId || selectedPath.length === 0) return;
 
-    const selectedDayNums = DAYS.filter(({ key }) => weekSchedule[key]).map(({ num }) => num);
-    const hour = scheduleTime ? String(parseInt(scheduleTime.split(":")[0], 10)) : "";
+    const selectedDayNums = DAYS.filter(({ key }) => weekSchedule[key]).map(
+      ({ num }) => num,
+    );
+    let hour = "";
+    if (scheduleTime) {
+      const [h, m] = scheduleTime.split(":").map(Number);
+      const local = new Date();
+      local.setHours(h, m || 0, 0, 0);
+      hour = String(local.getUTCHours());
+    }
 
     const cleanAssertions = {};
     selectedPath.forEach((nodeId) => {
@@ -121,7 +176,8 @@ function TestPathModal({ isOpen, onClose, scanId }) {
       enabled: true,
       days_of_week: selectedDayNums.join(","),
       hours: hour,
-      assertions: Object.keys(cleanAssertions).length > 0 ? cleanAssertions : null,
+      assertions:
+        Object.keys(cleanAssertions).length > 0 ? cleanAssertions : null,
     });
     if (!result.error) handleClose();
   };
@@ -165,7 +221,9 @@ function TestPathModal({ isOpen, onClose, scanId }) {
           <SectionTitle>Selected nodes ({selectedPath.length})</SectionTitle>
           <SelectedPathBox>
             {selectedPath.length === 0 ? (
-              <EmptyPathText>Select a URL node in the graph to start.</EmptyPathText>
+              <EmptyPathText>
+                Select a URL node in the graph to start.
+              </EmptyPathText>
             ) : (
               selectedPath.map((nodeId, i) => {
                 const nodeAssertions = assertions[nodeId] || [];
@@ -174,7 +232,9 @@ function TestPathModal({ isOpen, onClose, scanId }) {
                     <StepHeader>
                       <StepIndex>{i + 1}</StepIndex>
                       <StepLabel>Node #{nodeId}</StepLabel>
-                      <AddAssertBtn onClick={() => addAssertion(nodeId)}>+ Check</AddAssertBtn>
+                      <AddAssertBtn onClick={() => addAssertion(nodeId)}>
+                        + Check
+                      </AddAssertBtn>
                     </StepHeader>
 
                     {nodeAssertions.length > 0 && (
@@ -185,10 +245,19 @@ function TestPathModal({ isOpen, onClose, scanId }) {
                             <AssertionRow key={ai}>
                               <AssertionSelect
                                 value={assertion.type}
-                                onChange={(e) => updateAssertion(nodeId, ai, "type", e.target.value)}
+                                onChange={(e) =>
+                                  updateAssertion(
+                                    nodeId,
+                                    ai,
+                                    "type",
+                                    e.target.value,
+                                  )
+                                }
                               >
                                 {ASSERTION_TYPES.map((t) => (
-                                  <option key={t.value} value={t.value}>{t.label}</option>
+                                  <option key={t.value} value={t.value}>
+                                    {t.label}
+                                  </option>
                                 ))}
                               </AssertionSelect>
 
@@ -196,7 +265,14 @@ function TestPathModal({ isOpen, onClose, scanId }) {
                                 <AssertionInput
                                   placeholder="selector"
                                   value={assertion.selector || ""}
-                                  onChange={(e) => updateAssertion(nodeId, ai, "selector", e.target.value)}
+                                  onChange={(e) =>
+                                    updateAssertion(
+                                      nodeId,
+                                      ai,
+                                      "selector",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                               )}
 
@@ -204,11 +280,22 @@ function TestPathModal({ isOpen, onClose, scanId }) {
                                 <AssertionInput
                                   placeholder="expected"
                                   value={assertion.expected || ""}
-                                  onChange={(e) => updateAssertion(nodeId, ai, "expected", e.target.value)}
+                                  onChange={(e) =>
+                                    updateAssertion(
+                                      nodeId,
+                                      ai,
+                                      "expected",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                               )}
 
-                              <RemoveAssertBtn onClick={() => removeAssertion(nodeId, ai)}>×</RemoveAssertBtn>
+                              <RemoveAssertBtn
+                                onClick={() => removeAssertion(nodeId, ai)}
+                              >
+                                ×
+                              </RemoveAssertBtn>
                             </AssertionRow>
                           );
                         })}
@@ -230,7 +317,10 @@ function TestPathModal({ isOpen, onClose, scanId }) {
                     type="checkbox"
                     checked={weekSchedule[key]}
                     onChange={(e) =>
-                      setWeekSchedule((prev) => ({ ...prev, [key]: e.target.checked }))
+                      setWeekSchedule((prev) => ({
+                        ...prev,
+                        [key]: e.target.checked,
+                      }))
                     }
                   />
                   {label}
@@ -246,7 +336,12 @@ function TestPathModal({ isOpen, onClose, scanId }) {
           </ScheduleBox>
 
           <ButtonRow>
-            <Button variant="secondary" text="Cancel" onClick={handleClose} style={{ flex: 1 }} />
+            <Button
+              variant="secondary"
+              text="Cancel"
+              onClick={handleClose}
+              style={{ flex: 1 }}
+            />
             <Button
               variant="primary"
               disabled={selectedPath.length === 0 || saving}
